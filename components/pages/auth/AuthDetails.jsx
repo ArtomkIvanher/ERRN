@@ -1,23 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet, ActivityIndicator } from "react-native";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../../firebase";
 
 export default function AuthDetails() {
   const [authUser, setAuthUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Додаємо стан для відображення завантаження
 
   useEffect(() => {
-    const listen = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setAuthUser(user ? user : null);
+      setLoading(false); // При отриманні користувача, припиняємо індикатор завантаження
     });
 
-    return () => listen(); // Відписка при демонтуженні
+    // Відписка при демонтажі компонента
+    return () => unsubscribe();
   }, []);
 
-  function userSignOut() {
-    signOut(auth)
-      .then(() => console.log("Sign out successful"))
-      .catch((error) => console.log("Sign out error:", error));
+  const userSignOut = async () => {
+    try {
+      await signOut(auth);
+      console.log("Sign out successful");
+    } catch (error) {
+      console.error("Sign out error:", error.message);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text style={styles.text}>Завантаження...</Text>
+      </View>
+    );
   }
 
   return (

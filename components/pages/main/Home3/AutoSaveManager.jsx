@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
 
 export default function AutoSaveManager({
   authUser,
   schedule,
   saveSchedule,
-  onAutoSaveComplete, // Callback для завершення автозбереження
+  onAutoSaveComplete,
   isUnsavedChanges,
   autoSaveInterval,
 }) {
   const timerRef = useRef(null);
-  const [timeLeft, setTimeLeft] = useState(autoSaveInterval); // Зворотний відлік до автозбереження
-  const [isSaving, setIsSaving] = useState(false); // Прапор, щоб уникнути повторного збереження
+  const [timeLeft, setTimeLeft] = useState(autoSaveInterval);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (isUnsavedChanges) {
@@ -22,13 +23,13 @@ export default function AutoSaveManager({
   }, [isUnsavedChanges, autoSaveInterval]);
 
   const startAutoSave = () => {
-    stopAutoSave(); // Зупиняємо попередній таймер
-    setTimeLeft(autoSaveInterval); // Скидаємо таймер
+    stopAutoSave();
+    setTimeLeft(autoSaveInterval);
 
     timerRef.current = setInterval(() => {
       setTimeLeft((prevTime) => {
         if (prevTime > 1) return prevTime - 1;
-        saveChanges(); // Викликаємо збереження
+        saveChanges();
         return autoSaveInterval;
       });
     }, 1000);
@@ -36,18 +37,18 @@ export default function AutoSaveManager({
 
   const saveChanges = () => {
     if (authUser && schedule && !isSaving) {
-      setIsSaving(true); // Встановлюємо прапор, щоб уникнути повторного збереження
+      setIsSaving(true);
 
       saveSchedule(authUser.uid, schedule)
         .then(() => {
           console.log("Автозбереження виконано");
           if (onAutoSaveComplete) {
-            setTimeout(onAutoSaveComplete, 0); // Викликаємо callback у наступному циклі подій
+            setTimeout(onAutoSaveComplete, 0);
           }
         })
         .catch((err) => console.error("Помилка автозбереження:", err))
         .finally(() => {
-          setIsSaving(false); // Скидаємо прапор після завершення збереження
+          setIsSaving(false);
         });
     }
   };
@@ -60,12 +61,18 @@ export default function AutoSaveManager({
   };
 
   return (
-    <div>
+    <View style={styles.container}>
       {isUnsavedChanges ? (
-        <p>Час до автозбереження: {timeLeft} сек.</p>
+        <Text>Час до автозбереження: {timeLeft} сек.</Text>
       ) : (
-        <p>Всі зміни збережені.</p>
+        <Text>Всі зміни збережені.</Text>
       )}
-    </div>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+  },
+});

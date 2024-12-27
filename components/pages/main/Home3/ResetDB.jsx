@@ -1,11 +1,15 @@
 import React from "react";
-import { auth, db } from "../../../../firebase"; // Firebase auth і Firestore з одного імпорту
+import { Alert, Button, StyleSheet, View } from "react-native";
+import { auth, db } from "../../../../firebase"; // Firebase auth і Firestore
 import { doc, setDoc } from "firebase/firestore";
 
 export default function ResetDB() {
   const resetFirestore = async () => {
     const user = auth.currentUser;
-    if (!user) return alert("Будь ласка, увійдіть у свій акаунт.");
+    if (!user) {
+      Alert.alert("Помилка", "Будь ласка, увійдіть у свій акаунт.");
+      return;
+    }
 
     try {
       const scheduleRef = doc(db, "schedules", user.uid);
@@ -28,25 +32,22 @@ export default function ResetDB() {
       };
 
       await setDoc(scheduleRef, newScheduleData);
-      alert("Дані успішно оновлено в Firestore!");
+      Alert.alert("Успіх", "Дані успішно оновлено в Firestore!");
     } catch (error) {
       console.error("Помилка при оновленні Firestore:", error);
-      alert("Сталася помилка. Спробуйте ще раз.");
+      Alert.alert("Помилка", "Сталася помилка. Спробуйте ще раз.");
     }
   };
 
   return (
-    <button
-      onClick={resetFirestore}
-      style={{
-        padding: "10px",
-        backgroundColor: "red",
-        color: "white",
-        border: "none",
-        borderRadius: "5px",
-      }}
-    >
-      Оновити дані у Firestore
-    </button>
+    <View style={styles.container}>
+      <Button title="Оновити дані у Firestore" onPress={resetFirestore} color="red" />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+  },
+});
