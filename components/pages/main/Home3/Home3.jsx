@@ -1,5 +1,5 @@
-import { signOut } from 'firebase/auth'
-import React, { useEffect, useState } from 'react'
+import { signOut } from "firebase/auth";
+import React, { useEffect, useState } from "react";
 import {
 	Button,
 	FlatList,
@@ -7,74 +7,88 @@ import {
 	Text,
 	TextInput,
 	View,
-} from 'react-native'
-import { auth } from '../../../../firebase'
-import { getSchedule, saveSchedule } from '../../../../firestore'
-import AutoSaveManager from './AutoSaveManager'
-import ResetDB from './ResetDB'
-import ScheduleManager from './ScheduleManager'
-import SubjectsManager from './SubjectsManager'
+	RefreshControl,
+} from "react-native";
+import { auth } from "../../../../firebase";
+import { getSchedule, saveSchedule } from "../../../../firestore";
+import AutoSaveManager from "./AutoSaveManager";
+import ResetDB from "./ResetDB";
+import ScheduleManager from "./ScheduleManager";
+import SubjectsManager from "./SubjectsManager";
 
 export default function Home3() {
-	const [schedule, setSchedule] = useState(null)
-	const [authUser, setAuthUser] = useState(null)
-	const [autoSaveInterval, setAutoSaveInterval] = useState(30) // Мінімум 30 секунд
-	const [isUnsavedChanges, setIsUnsavedChanges] = useState(false)
+	const [schedule, setSchedule] = useState(null);
+	const [authUser, setAuthUser] = useState(null);
+	const [autoSaveInterval, setAutoSaveInterval] = useState(30); // Мінімум 30 секунд
+	const [isUnsavedChanges, setIsUnsavedChanges] = useState(false);
+	const [refreshing, setRefreshing] = useState(false); // Стан для жесту оновлення
 
 	useEffect(() => {
-		const user = auth.currentUser
+		const user = auth.currentUser;
 		if (user) {
-			setAuthUser(user)
-			loadSchedule(user.uid)
+			setAuthUser(user);
+			loadSchedule(user.uid);
 		}
-	}, [])
+	}, []);
 
 	const loadSchedule = async (userId) => {
-		const userSchedule = await getSchedule(userId)
-		const loadedSchedule = userSchedule || {
-			auto_save: 30,
-			subjects: [],
-			schedule: [],
+		try {
+			const userSchedule = await getSchedule(userId);
+			const loadedSchedule = userSchedule || {
+				auto_save: 30,
+				subjects: [],
+				schedule: [],
+			};
+			setSchedule(loadedSchedule);
+			setAutoSaveInterval(loadedSchedule.auto_save || 30);
+		} catch (error) {
+			console.error("Помилка завантаження розкладу:", error);
 		}
-		setSchedule(loadedSchedule)
-		setAutoSaveInterval(loadedSchedule.auto_save || 30)
-	}
+	};
+
+	const handleRefresh = async () => {
+		setRefreshing(true); // Починаємо оновлення
+		if (authUser) {
+			await loadSchedule(authUser.uid); // Завантажуємо дані заново
+		}
+		setRefreshing(false); // Завершуємо оновлення
+	};
 
 	const handleSaveChanges = () => {
 		if (authUser && schedule) {
 			saveSchedule(authUser.uid, schedule)
-				.then(() => console.log('Збереження виконано вручну'))
-				.catch((err) => console.error('Помилка збереження:', err))
-			setIsUnsavedChanges(false)
+				.then(() => console.log("Збереження виконано вручну"))
+				.catch((err) => console.error("Помилка збереження:", err));
+			setIsUnsavedChanges(false);
 		}
-	}
+	};
 
 	const handleDataChange = () => {
-		setIsUnsavedChanges(true)
-	}
+		setIsUnsavedChanges(true);
+	};
 
 	const handleAutoSaveIntervalChange = (value) => {
-		const newInterval = Math.max(30, value)
-		setAutoSaveInterval(newInterval)
+		const newInterval = Math.max(30, value);
+		setAutoSaveInterval(newInterval);
 		setSchedule((prev) => ({
 			...prev,
 			auto_save: newInterval,
-		}))
-		setIsUnsavedChanges(true)
-	}
+		}));
+		setIsUnsavedChanges(true);
+	};
 
 	const handleAutoSaveComplete = () => {
-		setIsUnsavedChanges(false)
-	}
+		setIsUnsavedChanges(false);
+	};
 
 	const handleSignOut = async () => {
 		try {
-			await signOut(auth)
-			console.log('Вихід виконано успішно')
+			await signOut(auth);
+			console.log("Вихід виконано успішно");
 		} catch (error) {
-			console.error('Помилка виходу:', error.message)
+			console.error("Помилка виходу:", error.message);
 		}
-	}
+	};
 
 	const renderContent = () => (
 		<View style={styles.container}>
@@ -97,23 +111,23 @@ export default function Home3() {
 			<SubjectsManager
 				subjects={schedule.subjects}
 				setSubjects={(subjects) => {
-					setSchedule((prev) => ({ ...prev, subjects }))
-					handleDataChange()
+					setSchedule((prev) => ({ ...prev, subjects }));
+					handleDataChange();
 				}}
 				onAddSubject={(newSubject) => {
 					setSchedule((prev) => ({
 						...prev,
 						subjects: [...prev.subjects, { ...newSubject, id: Date.now() }],
-					}))
-					handleDataChange()
+					}));
+					handleDataChange();
 				}}
 			/>
 
 			<ScheduleManager
 				schedule={schedule}
 				setSchedule={(updatedSchedule) => {
-					setSchedule(updatedSchedule)
-					handleDataChange()
+					setSchedule(updatedSchedule);
+					handleDataChange();
 				}}
 				subjects={schedule.subjects}
 			/>
@@ -137,44 +151,47 @@ export default function Home3() {
 				/>
 			</View>
 		</View>
-	)
+	);
 
 	return authUser && schedule ? (
 		<FlatList
 			data={[{}]} // Мокові дані
 			renderItem={renderContent}
 			keyExtractor={(_, index) => String(index)}
+			refreshControl={
+				<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+			} // Додаємо контроль оновлення
 		/>
 	) : (
 		<Text>Завантаження...</Text>
-	)
+	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flexGrow: 1,
-		backgroundColor: '#fff',
+		backgroundColor: "#fff",
 		padding: 10,
 	},
 	title: {
 		fontSize: 18,
-		fontWeight: 'bold',
+		fontWeight: "bold",
 		marginBottom: 20,
 	},
 	inputContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
+		flexDirection: "row",
+		alignItems: "center",
 		marginBottom: 20,
 	},
 	input: {
 		flex: 1,
-		borderColor: '#ccc',
+		borderColor: "#ccc",
 		borderWidth: 1,
 		padding: 10,
 		marginRight: 10,
 	},
 	signOutContainer: {
 		marginTop: 20,
-		alignItems: 'center',
+		alignItems: "center",
 	},
-})
+});
