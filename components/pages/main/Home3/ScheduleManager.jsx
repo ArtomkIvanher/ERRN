@@ -217,12 +217,11 @@ const styles = StyleSheet.create({
 	// Стили залишаються аналогічними з додаванням стилів для модального вікна
 	modalContainer: {
 		flex: 1,
-		justifyContent: 'center',
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		flexDirection: 'column-reverse',
+		backgroundColor: 'rgba(0, 0, 0, 0)',
 	},
 	modalContent: {
-		backgroundColor: '#fff',
-		margin: 20,
+		backgroundColor: '#ddd',
 		padding: 20,
 		borderRadius: 10,
 	},

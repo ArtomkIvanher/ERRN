@@ -5,7 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase"; // Переконайтеся, що ви імпортуєте auth правильно
 import SignIn from "./components/pages/auth/SignIn";
 import SignUp from "./components/pages/auth/SignUp";
-import Home3 from "./components/pages/main/Home3/Home3"; // Додатковий головний екран
+import Home from "./components/pages/main/Home/Home"; // Додатковий головний екран
 
 const Stack = createStackNavigator();
 
@@ -31,9 +31,9 @@ export default function App() {
         {user ? (
           // Якщо користувач авторизований, показуємо Home3
           <Stack.Screen
-            name="Home3"
-            component={Home3}
-            options={{ title: "Home3" }}
+            name="Home"
+            component={Home}
+            options={{ title: "Home" }}
           />
         ) : (
           // Якщо користувач не авторизований, показуємо екрани входу та реєстрації

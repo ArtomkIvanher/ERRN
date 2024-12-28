@@ -1,197 +1,113 @@
-import { signOut } from "firebase/auth";
-import React, { useEffect, useState } from "react";
+import React from 'react'
 import {
 	Button,
 	FlatList,
+	RefreshControl,
 	StyleSheet,
 	Text,
-	TextInput,
 	View,
-	RefreshControl,
-} from "react-native";
-import { auth } from "../../../../firebase";
-import { getSchedule, saveSchedule } from "../../../../firestore";
-import AutoSaveManager from "./AutoSaveManager";
-import ResetDB from "./ResetDB";
-import ScheduleManager from "./ScheduleManager";
-import SubjectsManager from "./SubjectsManager";
+} from 'react-native'
+import ResetDB from './ResetDB'
+import ScheduleManager from './ScheduleManager'
+import SubjectsManager from './SubjectsManager'
 
-export default function Home3() {
-	const [schedule, setSchedule] = useState(null);
-	const [authUser, setAuthUser] = useState(null);
-	const [autoSaveInterval, setAutoSaveInterval] = useState(30); // Мінімум 30 секунд
-	const [isUnsavedChanges, setIsUnsavedChanges] = useState(false);
-	const [refreshing, setRefreshing] = useState(false); // Стан для жесту оновлення
+export default function Home3({
+	schedule,
+	authUser,
+	autoSaveInterval,
+	isUnsavedChanges,
+	refreshing,
+	onRefresh,
+	onSaveChanges,
+	onDataChange,
+	onAutoSaveIntervalChange,
+	onAutoSaveComplete,
+	onSignOut,
+	setSchedule,
+}) {
+	if (!authUser || !schedule) {
+		return <Text>Завантаження...</Text>
+	}
 
-	useEffect(() => {
-		const user = auth.currentUser;
-		if (user) {
-			setAuthUser(user);
-			loadSchedule(user.uid);
-		}
-	}, []);
-
-	const loadSchedule = async (userId) => {
-		try {
-			const userSchedule = await getSchedule(userId);
-			const loadedSchedule = userSchedule || {
-				auto_save: 30,
-				subjects: [],
-				schedule: [],
-			};
-			setSchedule(loadedSchedule);
-			setAutoSaveInterval(loadedSchedule.auto_save || 30);
-		} catch (error) {
-			console.error("Помилка завантаження розкладу:", error);
-		}
-	};
-
-	const handleRefresh = async () => {
-		setRefreshing(true); // Починаємо оновлення
-		if (authUser) {
-			await loadSchedule(authUser.uid); // Завантажуємо дані заново
-		}
-		setRefreshing(false); // Завершуємо оновлення
-	};
-
-	const handleSaveChanges = () => {
-		if (authUser && schedule) {
-			saveSchedule(authUser.uid, schedule)
-				.then(() => console.log("Збереження виконано вручну"))
-				.catch((err) => console.error("Помилка збереження:", err));
-			setIsUnsavedChanges(false);
-		}
-	};
-
-	const handleDataChange = () => {
-		setIsUnsavedChanges(true);
-	};
-
-	const handleAutoSaveIntervalChange = (value) => {
-		const newInterval = Math.max(30, value);
-		setAutoSaveInterval(newInterval);
-		setSchedule((prev) => ({
-			...prev,
-			auto_save: newInterval,
-		}));
-		setIsUnsavedChanges(true);
-	};
-
-	const handleAutoSaveComplete = () => {
-		setIsUnsavedChanges(false);
-	};
-
-	const handleSignOut = async () => {
-		try {
-			await signOut(auth);
-			console.log("Вихід виконано успішно");
-		} catch (error) {
-			console.error("Помилка виходу:", error.message);
-		}
-	};
-
-	const renderContent = () => (
-		<View style={styles.container}>
-			<Text style={styles.title}>
-				Розклад користувача: {authUser.email}
-			</Text>
-
-			<View style={styles.inputContainer}>
-				<Text>Автозбереження кожні (секунд): </Text>
-				<TextInput
-					style={styles.input}
-					keyboardType="number-pad"
-					value={String(autoSaveInterval)}
-					onChangeText={(text) => handleAutoSaveIntervalChange(Number(text))}
-				/>
-			</View>
-
-			<Button title="Зберегти зараз" onPress={handleSaveChanges} />
-
-			<SubjectsManager
-				subjects={schedule.subjects}
-				setSubjects={(subjects) => {
-					setSchedule((prev) => ({ ...prev, subjects }));
-					handleDataChange();
-				}}
-				onAddSubject={(newSubject) => {
-					setSchedule((prev) => ({
-						...prev,
-						subjects: [...prev.subjects, { ...newSubject, id: Date.now() }],
-					}));
-					handleDataChange();
-				}}
-			/>
-
-			<ScheduleManager
-				schedule={schedule}
-				setSchedule={(updatedSchedule) => {
-					setSchedule(updatedSchedule);
-					handleDataChange();
-				}}
-				subjects={schedule.subjects}
-			/>
-
-			<AutoSaveManager
-				authUser={authUser}
-				schedule={schedule}
-				saveSchedule={saveSchedule}
-				isUnsavedChanges={isUnsavedChanges}
-				onAutoSaveComplete={handleAutoSaveComplete}
-				autoSaveInterval={autoSaveInterval}
-			/>
-
-			<ResetDB />
-
-			<View style={styles.signOutContainer}>
-				<Button
-					title="Вийти з акаунту"
-					color="red"
-					onPress={handleSignOut}
-				/>
-			</View>
-		</View>
-	);
-
-	return authUser && schedule ? (
+	return (
 		<FlatList
-			data={[{}]} // Мокові дані
-			renderItem={renderContent}
+			data={[{}]}
+			renderItem={() => (
+				<View style={styles.container}>
+					<Text style={styles.title}>
+						Розклад користувача: {authUser.email}
+					</Text>
+
+					<SubjectsManager
+						subjects={schedule.subjects}
+						setSubjects={subjects => {
+							const updatedSchedule = { ...schedule, subjects }
+							setSchedule(updatedSchedule)
+							onDataChange(updatedSchedule) // Передаємо оновлений розклад
+						}}
+						onAddSubject={newSubject => {
+							const updatedSubjects = [
+								...schedule.subjects,
+								{ ...newSubject, id: Date.now() },
+							]
+							const updatedSchedule = {
+								...schedule,
+								subjects: updatedSubjects,
+							}
+							setSchedule(updatedSchedule)
+							onDataChange(updatedSchedule) // Передаємо оновлений розклад
+						}}
+					/>
+
+					<ScheduleManager
+						schedule={schedule}
+						setSchedule={updatedSchedule => {
+							setSchedule(updatedSchedule)
+							onDataChange(updatedSchedule) // Передаємо оновлений розклад
+						}}
+						subjects={schedule.subjects}
+					/>
+
+					<ResetDB />
+
+					<View style={styles.signOutContainer}>
+						<Button title='Вийти з акаунту' color='red' onPress={onSignOut} />
+					</View>
+				</View>
+			)}
 			keyExtractor={(_, index) => String(index)}
 			refreshControl={
-				<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-			} // Додаємо контроль оновлення
+				<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+			}
 		/>
-	) : (
-		<Text>Завантаження...</Text>
-	);
+	)
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flexGrow: 1,
-		backgroundColor: "#fff",
+		backgroundColor: '#fff',
 		padding: 10,
 	},
 	title: {
 		fontSize: 18,
-		fontWeight: "bold",
+		fontWeight: 'bold',
 		marginBottom: 20,
 	},
 	inputContainer: {
-		flexDirection: "row",
-		alignItems: "center",
+		flexDirection: 'row',
+		alignItems: 'center',
 		marginBottom: 20,
 	},
 	input: {
 		flex: 1,
-		borderColor: "#ccc",
+		borderColor: '#ccc',
 		borderWidth: 1,
 		padding: 10,
 		marginRight: 10,
 	},
 	signOutContainer: {
 		marginTop: 20,
-		alignItems: "center",
+		alignItems: 'center',
 	},
-});
+})
