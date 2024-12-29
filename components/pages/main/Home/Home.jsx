@@ -15,7 +15,7 @@ export default function Home() {
   const [authUser, setAuthUser] = useState(null); // Авторизований користувач
   const [autoSaveInterval, setAutoSaveInterval] = useState(30); // Інтервал автозбереження
   const [isUnsavedChanges, setIsUnsavedChanges] = useState(false); // Чи є незбережені зміни
-  const [refreshing, setRefreshing] = useState(false); // Стан оновлення
+  const [lessonTimes, setLessonTimes] = useState([]); // Масив часу пар
   const timerRef = useRef(null);
 
   // Завантаження користувача та даних
@@ -45,8 +45,39 @@ export default function Home() {
       };
       setSchedule(loadedSchedule); // Зберігаємо розклад
       setAutoSaveInterval(loadedSchedule.auto_save || 30); // Встановлюємо інтервал автозбереження
+      calculateLessonTimes(loadedSchedule.start_time, loadedSchedule.duration, loadedSchedule.breaks);
     } catch (error) {
       console.error('Помилка завантаження розкладу:', error);
+    }
+  };
+
+  // Обчислення часу пар
+  const calculateLessonTimes = (startTime, duration, breaks) => {
+    try {
+      const [hours, minutes] = startTime.split(":").map(Number);
+      if (isNaN(hours) || isNaN(minutes)) {
+        throw new Error(`Некоректний формат start_time: ${startTime}`);
+      }
+
+      const start = new Date();
+      start.setHours(hours, minutes, 0);
+
+      const times = [];
+      let currentTime = new Date(start);
+
+      breaks.forEach((breakDuration, index) => {
+        const endOfLesson = new Date(currentTime.getTime() + duration * 60 * 1000);
+        times.push({
+          lesson: index + 1,
+          start: currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          end: endOfLesson.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        });
+        currentTime = new Date(endOfLesson.getTime() + breakDuration * 60 * 1000);
+      });
+
+      setLessonTimes(times);
+    } catch (error) {
+      console.error("Помилка обчислення часу пар:", error.message);
     }
   };
 
@@ -70,31 +101,6 @@ export default function Home() {
     setIsUnsavedChanges(true);
   };
 
-  // Автозбереження
-  useEffect(() => {
-    if (isUnsavedChanges) {
-      startAutoSave();
-    } else {
-      stopAutoSave();
-    }
-    return () => stopAutoSave();
-  }, [isUnsavedChanges, autoSaveInterval]);
-
-  const startAutoSave = () => {
-    stopAutoSave();
-    timerRef.current = setInterval(() => {
-      handleSaveChanges();
-    }, autoSaveInterval * 1000);
-  };
-
-  const stopAutoSave = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-  };
-
-  // Вихід із системи
   const handleSignOut = async () => {
     try {
       await signOut(auth);
@@ -106,20 +112,19 @@ export default function Home() {
 
   const handleDataChange = (updatedSchedule) => {
     setSchedule(updatedSchedule);
-    setIsUnsavedChanges(true); // Помітка для автозбереження
+    setIsUnsavedChanges(true);
   };
 
-  // Загальні пропси для дочірніх компонентів
   const commonProps = {
     schedule,
     authUser,
     autoSaveInterval,
     isUnsavedChanges,
-    refreshing,
     setSchedule,
     handleSaveChanges,
     onSignOut: handleSignOut,
-    onDataChange: handleDataChange, // Передаємо функцію
+    onDataChange: handleDataChange,
+    lessonTimes,
   };
 
   return (
@@ -147,16 +152,10 @@ export default function Home() {
 
       <Tab.Navigator>
         <Tab.Screen name="Home3_1">
-          {() => <Home2 {...commonProps} title="Page 1" />}
+          {() => <Home2 {...commonProps} />}
         </Tab.Screen>
         <Tab.Screen name="Home3_2">
-          {() => <Home3 {...commonProps} title="Page 2" />}
-        </Tab.Screen>
-        <Tab.Screen name="Home3_3">
-          {() => <Home3 {...commonProps} title="Page 3" />}
-        </Tab.Screen>
-        <Tab.Screen name="Home3_4">
-          {() => <Home3 {...commonProps} title="Page 4" />}
+          {() => <Home3 {...commonProps} />}
         </Tab.Screen>
       </Tab.Navigator>
     </View>
