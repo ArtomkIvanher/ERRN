@@ -24,7 +24,7 @@ export default function App() {
 			<Stack.Navigator>
 				{user ? (
 					<Stack.Screen
-						name='Homeу'
+						name='Home'
 						component={Home}
 						options={{ title: 'Home' }}
 					/>
