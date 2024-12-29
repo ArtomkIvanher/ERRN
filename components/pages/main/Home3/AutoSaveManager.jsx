@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Animated, Easing } from "react-native";
 
 export default function AutoSaveManager({
   authUser,
@@ -13,11 +13,24 @@ export default function AutoSaveManager({
   const [timeLeft, setTimeLeft] = useState(autoSaveInterval);
   const [isSaving, setIsSaving] = useState(false);
 
+  const heightAnim = useRef(new Animated.Value(0)).current; // Початкова висота
+
   useEffect(() => {
     if (isUnsavedChanges) {
       startAutoSave();
+      Animated.timing(heightAnim, {
+        toValue: 30, // Висота панелі
+        duration: 500,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: false,
+      }).start();
     } else {
-      stopAutoSave();
+      Animated.timing(heightAnim, {
+        toValue: 0, // Сховати панель
+        duration: 500,
+        easing: Easing.in(Easing.quad),
+        useNativeDriver: false,
+      }).start(() => stopAutoSave());
     }
     return () => stopAutoSave();
   }, [isUnsavedChanges, autoSaveInterval]);
@@ -61,18 +74,35 @@ export default function AutoSaveManager({
   };
 
   return (
-    <View style={styles.container}>
-      {isUnsavedChanges ? (
-        <Text>Час до автозбереження: {timeLeft} сек.</Text>
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          height: heightAnim, // Анімація висоти
+        },
+      ]}
+    >
+      {isSaving ? (
+        <Text style={styles.text}>Збереження...</Text>
+      ) : isUnsavedChanges ? (
+        <Text style={styles.text}>Час до автозбереження: {timeLeft} сек.</Text>
       ) : (
-        <Text>Всі зміни збережені.</Text>
+        <Text style={styles.text}>Всі зміни збережені.</Text>
       )}
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    backgroundColor: "#ffcc00",
+    alignItems: "center",
+    overflow: "hidden", // Ховаємо зайвий контент під час анімації
+    height: 10,
+  },
+  text: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#333",
   },
 });
