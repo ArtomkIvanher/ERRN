@@ -98,7 +98,7 @@ export default function Home() {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      console.log('Вихід виконано успішно');
+      console.log('Вихід виконано успішно опршщкоршщо');
     } catch (error) {
       console.error('Помилка виходу:', error.message);
     }
