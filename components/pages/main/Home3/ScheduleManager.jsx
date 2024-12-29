@@ -110,7 +110,6 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 				>
 					<Text style={styles.repeatButtonText}>Змінити кількість тижнів</Text>
 				</TouchableOpacity>
-				<Text>Зараз вибрано: {schedule.repeat} тижні(нь)</Text>
 				{showRepeatMenu && (
 					<View style={styles.repeatMenu}>
 						{[1, 2, 3, 4].map(value => (
