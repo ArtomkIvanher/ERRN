@@ -15,7 +15,7 @@ export default function ResetDB() {
       const scheduleRef = doc(db, "schedules", user.uid);
       const newScheduleData = {
         schedule: {
-          duration: 120,
+          duration: 80,
           breaks: [10, 20, 10, 10],
           start_time: "08:30",
           auto_save: 60,
