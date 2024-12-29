@@ -4,6 +4,7 @@ import { signOut } from 'firebase/auth';
 import { View, Button, Text, TextInput, StyleSheet } from 'react-native';
 import { auth } from '../../../../firebase';
 import { getSchedule, saveSchedule } from '../../../../firestore';
+import Home2 from '../Home2/Home2';
 import Home3 from '../Home3/Home3';
 import AutoSaveManager from '../Home3/AutoSaveManager';
 
@@ -25,12 +26,13 @@ export default function Home() {
       loadSchedule(user.uid); // Завантажуємо розклад для користувача
     }
   }, []);
+
   useEffect(() => {
-	if (isUnsavedChanges) {
-	  timerRef.current = setInterval(() => handleSaveChanges(), autoSaveInterval * 1000);
-	}
-	return () => clearInterval(timerRef.current);
-  }, [isUnsavedChanges, autoSaveInterval]);  
+    if (isUnsavedChanges) {
+      timerRef.current = setInterval(() => handleSaveChanges(), autoSaveInterval * 1000);
+    }
+    return () => clearInterval(timerRef.current);
+  }, [isUnsavedChanges, autoSaveInterval]);
 
   // Завантаження розкладу з Firebase
   const loadSchedule = async (userId) => {
@@ -103,25 +105,22 @@ export default function Home() {
   };
 
   const handleDataChange = (updatedSchedule) => {
-	setSchedule(updatedSchedule);
-	setIsUnsavedChanges(true); // Помітка для автозбереження
+    setSchedule(updatedSchedule);
+    setIsUnsavedChanges(true); // Помітка для автозбереження
   };
-  
 
   // Загальні пропси для дочірніх компонентів
   const commonProps = {
-	schedule,
-	authUser,
-	autoSaveInterval,
-	isUnsavedChanges,
-	refreshing,
-	setSchedule,
-	handleSaveChanges,
-	onSignOut: handleSignOut,
-	onDataChange: handleDataChange, // Передаємо функцію
+    schedule,
+    authUser,
+    autoSaveInterval,
+    isUnsavedChanges,
+    refreshing,
+    setSchedule,
+    handleSaveChanges,
+    onSignOut: handleSignOut,
+    onDataChange: handleDataChange, // Передаємо функцію
   };
-  
-  
 
   return (
     <View style={styles.container}>
@@ -148,7 +147,7 @@ export default function Home() {
 
       <Tab.Navigator>
         <Tab.Screen name="Home3_1">
-          {() => <Home3 {...commonProps} title="Page 1" />}
+          {() => <Home2 {...commonProps} title="Page 1" />}
         </Tab.Screen>
         <Tab.Screen name="Home3_2">
           {() => <Home3 {...commonProps} title="Page 2" />}
