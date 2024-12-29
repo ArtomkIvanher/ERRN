@@ -1,0 +1,32 @@
+* [33mee0f4b5[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m провірка
+*   [33m762c2fc[m Merge branch 'page-schedule-settings'
+[32m|[m[33m\[m  
+[32m|[m * [33mde34769[m кнопка вибору тижня
+[32m|[m * [33mf13e880[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mpage-schedule-settings[m[33m, [m[1;31morigin/page-schedule-settings[m[33m, [m[1;32mdevelop[m[33m)[m schedule: {duration: 80
+[32m|[m *   [33m01ea643[m Merge branch 'schedule-menu' into develop
+[32m|[m [34m|[m[35m\[m  
+[32m|[m * [35m|[m [33m87c504b[m провірка
+[32m|[m * [35m|[m [33meaa50de[m провірка
+[32m|[m * [35m|[m [33m50c3bae[m провірка
+[32m|[m * [35m|[m [33mea444b6[m[33m ([m[1;31morigin/develop[m[33m)[m проверка
+* [35m|[m [35m|[m [33m899dd49[m провірка
+* [35m|[m [35m|[m [33m68057c0[m провірка
+* [35m|[m [35m|[m [33m0fdd1f2[m провірка
+* [35m|[m [35m|[m [33m2224a91[m провірка
+[35m|[m[35m/[m [35m/[m  
+[35m|[m [35m|[m * [33m5773ebb[m[33m ([m[1;32mpage-main[m[33m)[m првірка
+[35m|[m [35m|[m[35m/[m  
+[35m|[m * [33m46db71b[m провірка
+[35m|[m * [33m022701d[m провірка
+[35m|[m * [33m2ca9859[m провірка
+[35m|[m * [33md650a35[m[33m ([m[1;31morigin/schedule-menu[m[33m)[m додано початок і кінець пари
+[35m|[m * [33m9516697[m провірка
+[35m|[m * [33mded78e7[m провірка
+[35m|[m[35m/[m  
+* [33m9a802bb[m add home2
+* [33m4f63d07[m add Navigation
+* [33mad6da3c[m add reboot
+* [33m4eabce5[m add Home
+* [33m8f019ec[m add SignIn
+* [33m6449839[m add firebase
+* [33ma0b7caf[m npx expo start
