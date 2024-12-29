@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Linking } from 'react-native';
 
-export default function Home2({ schedule }) {
+export default function Home2({ schedule, lessonTimes }) {
   const daysOfWeek = [
     'Понеділок',
     'Вівторок',
@@ -32,11 +32,17 @@ export default function Home2({ schedule }) {
               {schedule.schedule[dayIndex][week].length > 0 ? (
                 schedule.schedule[dayIndex][week].map((subjectId, subjectIndex) => {
                   const subject = subjects.find(subject => subject.id === subjectId);
+                  const timeInfo = lessonTimes?.[subjectIndex] || {}; // Початок і кінець пари
                   return (
                     <View key={subjectIndex} style={styles.subjectContainer}>
                       <Text style={styles.subjectName}>
                         Пара {subjectIndex + 1}: {subject?.name || '—'}
                       </Text>
+                      {timeInfo.start && timeInfo.end && (
+                        <Text style={styles.lessonTime}>
+                          {timeInfo.start} - {timeInfo.end}
+                        </Text>
+                      )}
                       {subject && (
                         <>
                           <Text style={styles.subjectDetails}>
@@ -109,6 +115,12 @@ const styles = StyleSheet.create({
   subjectName: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  lessonTime: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    color: '#333',
+    marginVertical: 5,
   },
   subjectDetails: {
     fontSize: 14,
