@@ -90,6 +90,11 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 		setSchedule(updatedSchedule)
 	}
 
+	const handleSelectRepeatOption = value => {
+		setSchedule({ ...schedule, repeat: value })
+		setShowRepeatMenu(false) // Закриваємо меню після вибору опції
+	}
+
 	if (!schedule || !schedule.schedule) {
 		return <Text>Loading schedule...</Text>
 	}
@@ -100,29 +105,30 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Розклад по днях</Text>
-
 			<View style={styles.repeatContainer}>
 				<Text style={styles.repeatLabel}>Кількість тижнів повторення:</Text>
-				<TouchableOpacity
-					style={styles.repeatButton}
-					onPress={() => setShowRepeatMenu(prev => !prev)}
-				>
-					<Text style={styles.repeatButtonText}>Змінити кількість тижнів</Text>
-				</TouchableOpacity>
-				{showRepeatMenu && (
-					<View style={styles.repeatMenu}>
-						{[1, 2, 3, 4].map(value => (
-							<TouchableOpacity
-								key={value}
-								onPress={() => setSchedule({ ...schedule, repeat: value })}
-								style={styles.repeatOption}
+				<View style={styles.repeatButtons}>
+					{[1, 2, 3, 4].map(value => (
+						<TouchableOpacity
+							key={value}
+							onPress={() => handleSelectRepeatOption(value)}
+							style={[
+								styles.weekButton,
+								schedule.repeat === value && styles.weekButtonActive,
+							]}
+						>
+							<Text
+								style={[
+									styles.weekButtonText,
+									schedule.repeat === value && styles.weekButtonTextActive,
+								]}
 							>
-								<Text style={styles.repeatOptionText}>{value} тижні(нь)</Text>
-							</TouchableOpacity>
-						))}
-					</View>
-				)}
+								{value}
+							</Text>
+						</TouchableOpacity>
+					))}
+				</View>
+				<Text>Зараз вибрано: {schedule.repeat} тижні(нь)</Text>
 			</View>
 
 			{schedule.schedule.map((day, dayIndex) => (
@@ -159,9 +165,7 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 												handleRemoveSubject(dayIndex, weekPart, subjectIndex)
 											}
 										>
-											<Text style={styles.removeSubjectButtonText}>
-												В
-											</Text>
+											<Text style={styles.removeSubjectButtonText}>В</Text>
 										</TouchableOpacity>
 									</View>
 								))}
@@ -176,7 +180,6 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 				</View>
 			))}
 
-			{/* Модальне вікно для вибору предмета */}
 			{showSubjectModal && (
 				<Modal
 					transparent={true}
@@ -185,7 +188,7 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 				>
 					<View style={styles.modalContainer}>
 						<View style={styles.modalContent}>
-							<Text style={styles.modalTitle}>Виберіть предме</Text>
+							<Text style={styles.modalTitle}>Виберіть предмет</Text>
 							<FlatList
 								data={subjects}
 								keyExtractor={item => item.id.toString()}
@@ -314,12 +317,12 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 	subjectContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between', // Розташування кнопок у рядку
-    marginBottom: 10,
-    borderRadius: 5,
-  },
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between', // Розташування кнопок у рядку
+		marginBottom: 10,
+		borderRadius: 5,
+	},
 	picker: {
 		height: 50,
 		width: '100%',
@@ -335,30 +338,53 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		textAlign: 'center',
 	},
-  
-subjectButton: {
-  flex: 1, // Займає все доступне місце
-  paddingVertical: 10,
-  paddingHorizontal: 15,
-  borderRadius: 5,
-  backgroundColor: '#4CAF50',
-  marginRight: 10, // Простір між кнопкою вибору та видалення
-},
-subjectButtonText: {
-  color: '#fff',
-  fontSize: 16,
-  textAlign: 'center',
-},
-removeSubjectButton: {
-  width: '10%',
-  paddingVertical: 10,
-  paddingHorizontal: 15,
-  borderRadius: 5,
-  backgroundColor: '#fF5733',
-},
-removeSubjectButtonText: {
-  color: '#fff',
-  fontSize: 16,
-  textAlign: 'center',
-},
+
+	subjectButton: {
+		flex: 1, // Займає все доступне місце
+		paddingVertical: 10,
+		paddingHorizontal: 15,
+		borderRadius: 5,
+		backgroundColor: '#4CAF50',
+		marginRight: 10, // Простір між кнопкою вибору та видалення
+	},
+	subjectButtonText: {
+		color: '#fff',
+		fontSize: 16,
+		textAlign: 'center',
+	},
+	removeSubjectButton: {
+		width: '10%',
+		paddingVertical: 10,
+		paddingHorizontal: 15,
+		borderRadius: 5,
+		backgroundColor: '#fF5733',
+	},
+	removeSubjectButtonText: {
+		color: '#fff',
+		fontSize: 16,
+		textAlign: 'center',
+	},
+	repeatButtons: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		marginTop: 10,
+	  },
+	  weekButton: {
+		flex: 1,
+		marginHorizontal: 5,
+		paddingVertical: 10,
+		borderRadius: 5,
+		backgroundColor: '#f0f0f0',
+		alignItems: 'center',
+	  },
+	  weekButtonActive: {
+		backgroundColor: '#4CAF50',
+	  },
+	  weekButtonText: {
+		fontSize: 16,
+		color: '#000',
+	  },
+	  weekButtonTextActive: {
+		color: '#fff',
+	  },
 })
