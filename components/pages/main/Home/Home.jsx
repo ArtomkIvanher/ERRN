@@ -17,6 +17,7 @@ export default function Home() {
 	const [autoSaveInterval, setAutoSaveInterval] = useState(30) // Інтервал автозбереження
 	const [isUnsavedChanges, setIsUnsavedChanges] = useState(false) // Чи є незбережені зміни
 	const [lessonTimes, setLessonTimes] = useState([]) // Масив часу пар
+	const [startingWeek, setStartingWeek] = useState(1) // Початковий тиждень
 	const timerRef = useRef(null)
 
 	// Завантаження користувача та даних
@@ -46,9 +47,11 @@ export default function Home() {
 				auto_save: 30,
 				subjects: [],
 				schedule: [],
+				starting_week: 1, // За замовчуванням перший тиждень
 			}
-			setSchedule(loadedSchedule) // Зберігаємо розклад
-			setAutoSaveInterval(loadedSchedule.auto_save || 30) // Встановлюємо інтервал автозбереження
+			setSchedule(loadedSchedule)
+			setStartingWeek(loadedSchedule.starting_week || 1)
+			setAutoSaveInterval(loadedSchedule.auto_save || 30)
 			calculateLessonTimes(
 				loadedSchedule.start_time,
 				loadedSchedule.duration,
@@ -58,6 +61,16 @@ export default function Home() {
 			console.error('Помилка завантаження розкладу:', error)
 		}
 	}
+
+	const updateStartingWeek = (week) => {
+		const formattedDate = new Date(week.getFullYear(), week.getMonth(), week.getDate())
+			.toISOString()
+			.split('T')[0]; // Формат YYYY-MM-DD
+		const updatedSchedule = { ...schedule, starting_week: formattedDate };
+		setSchedule(updatedSchedule);
+		setStartingWeek(formattedDate);
+		setIsUnsavedChanges(true);
+	};
 
 	// Обчислення часу пар
 	const calculateLessonTimes = (startTime, duration, breaks) => {
@@ -143,6 +156,8 @@ export default function Home() {
 		onSignOut: handleSignOut,
 		onDataChange: handleDataChange,
 		lessonTimes,
+		updateStartingWeek, // Функція для оновлення початкового тижня
+		startingWeek, // Поточний вибраний тиждень
 	}
 
 	return (
