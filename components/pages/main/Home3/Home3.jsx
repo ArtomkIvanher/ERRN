@@ -1,5 +1,5 @@
 import DateTimePicker from '@react-native-community/datetimepicker'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
 	Button,
 	FlatList,
@@ -33,6 +33,13 @@ export default function Home3({
 }) {
 	const [showPicker, setShowPicker] = useState(false) // Контролює видимість календаря
 	const [selectedDate, setSelectedDate] = useState(new Date()) // Обрана дата
+
+	// Ініціалізація дати з Firebase
+	useEffect(() => {
+		if (schedule?.starting_week) {
+			setSelectedDate(new Date(schedule.starting_week))
+		}
+	}, [schedule])
 
 	// Функція для обчислення понеділка поточного тижня
 	const getMondayOfWeek = date => {
