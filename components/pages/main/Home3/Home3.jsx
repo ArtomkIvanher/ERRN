@@ -1,7 +1,9 @@
-import React from 'react'
+import DateTimePicker from '@react-native-community/datetimepicker'
+import React, { useState } from 'react'
 import {
 	Button,
 	FlatList,
+	Platform,
 	RefreshControl,
 	StyleSheet,
 	Text,
@@ -10,6 +12,10 @@ import {
 import ResetDB from './ResetDB'
 import ScheduleManager from './ScheduleManager'
 import SubjectsManager from './SubjectsManager'
+
+// Для веб-версії
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 export default function Home3({
 	schedule,
@@ -25,8 +31,40 @@ export default function Home3({
 	onSignOut,
 	setSchedule,
 }) {
-	if (!authUser || !schedule) {
-		return <Text>Завантаження...</Text>
+	const [showPicker, setShowPicker] = useState(false) // Контролює видимість календаря
+	const [selectedDate, setSelectedDate] = useState(new Date()) // Обрана дата
+
+	// Функція для обчислення понеділка поточного тижня
+	const getMondayOfWeek = date => {
+		const copiedDate = new Date(
+			Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+		) // Переконання, що час очищений
+		const day = copiedDate.getUTCDay() // Отримуємо день тижня (0 - неділя, 1 - понеділок, ...)
+		const diff = day === 0 ? -6 : 1 - day // Якщо неділя (0), зміщення -6
+		copiedDate.setUTCDate(copiedDate.getUTCDate() + diff) // Зсув до понеділка
+		return copiedDate // Повертаємо понеділок
+	}
+
+	// Обробка вибору дати
+	const handleDateSelection = date => {
+		if (!date) return
+		const cleanDate = new Date(
+			date.getFullYear(),
+			date.getMonth(),
+			date.getDate()
+		) // Очистка часу
+		const monday = getMondayOfWeek(cleanDate)
+		console.log('Обрана дата:', cleanDate)
+		console.log('Понеділок тижня:', monday)
+
+		setSelectedDate(cleanDate)
+		setShowPicker(false) // Закриваємо календар
+
+		// Оновлюємо початковий тиждень у розкладі
+		onDataChange({
+			...schedule,
+			starting_week: monday.toISOString().split('T')[0], // ISO формат
+		})
 	}
 
 	return (
@@ -68,6 +106,42 @@ export default function Home3({
 						subjects={schedule.subjects}
 					/>
 
+					{/* Кнопка для відкриття календаря */}
+					<View style={styles.inputContainer}>
+						<Button
+							title={`Вибрати дату (${
+								getMondayOfWeek(selectedDate).toISOString().split('T')[0]
+							})`}
+							onPress={() => setShowPicker(!showPicker)}
+						/>
+
+						{showPicker && (
+							<View
+								style={
+									Platform.OS === 'web'
+										? styles.webPicker
+										: styles.pickerContainer
+								}
+							>
+								{Platform.OS === 'web' ? (
+									// React-datepicker для веба
+									<DatePicker
+										selected={selectedDate}
+										onChange={date => handleDateSelection(date)}
+										inline
+									/>
+								) : (
+									<DateTimePicker
+										value={selectedDate}
+										mode='date'
+										display='default'
+										onChange={(event, date) => handleDateSelection(date)}
+									/>
+								)}
+							</View>
+						)}
+					</View>
+
 					<ResetDB />
 
 					<View style={styles.signOutContainer}>
@@ -95,16 +169,20 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	inputContainer: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		alignItems: 'center',
 		marginBottom: 20,
 	},
-	input: {
-		flex: 1,
-		borderColor: '#ccc',
-		borderWidth: 1,
+	pickerContainer: {
+		marginTop: 10,
+		backgroundColor: 'white',
 		padding: 10,
-		marginRight: 10,
+		borderRadius: 10,
+		elevation: 5,
+	},
+	webPicker: {
+		marginTop: 10,
+		width: '100%',
 	},
 	signOutContainer: {
 		marginTop: 20,
