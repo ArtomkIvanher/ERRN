@@ -62,15 +62,19 @@ export default function Home() {
 		}
 	}
 
-	const updateStartingWeek = (week) => {
-		const formattedDate = new Date(week.getFullYear(), week.getMonth(), week.getDate())
+	const updateStartingWeek = week => {
+		const formattedDate = new Date(
+			week.getFullYear(),
+			week.getMonth(),
+			week.getDate()
+		)
 			.toISOString()
-			.split('T')[0]; // Формат YYYY-MM-DD
-		const updatedSchedule = { ...schedule, starting_week: formattedDate };
-		setSchedule(updatedSchedule);
-		setStartingWeek(formattedDate);
-		setIsUnsavedChanges(true);
-	};
+			.split('T')[0] // Формат YYYY-MM-DD
+		const updatedSchedule = { ...schedule, starting_week: formattedDate }
+		setSchedule(updatedSchedule)
+		setStartingWeek(formattedDate)
+		setIsUnsavedChanges(true)
+	}
 
 	// Обчислення часу пар
 	const calculateLessonTimes = (startTime, duration, breaks) => {
@@ -156,22 +160,14 @@ export default function Home() {
 		onSignOut: handleSignOut,
 		onDataChange: handleDataChange,
 		lessonTimes,
-		updateStartingWeek, // Функція для оновлення початкового тижня
-		startingWeek, // Поточний вибраний тиждень
+		updateStartingWeek,
+		startingWeek,
+		handleAutoSaveIntervalChange,
 	}
 
 	return (
 		<View style={{ flex: 1 }}>
 			<View style={styles.container}>
-				<View style={styles.inputContainer}>
-					<Text>Автозбереження кожні (секунд): </Text>
-					<TextInput
-						style={styles.input}
-						keyboardType='number-pad'
-						value={String(autoSaveInterval)}
-						onChangeText={text => handleAutoSaveIntervalChange(Number(text))}
-					/>
-				</View>
 
 				{/* Кнопка "Зберегти зараз" */}
 				{isUnsavedChanges && (
@@ -205,6 +201,7 @@ export default function Home() {
 							tabBarIcon: ({ color, size }) => (
 								<Icon name='calendar' size={size} color={color} /> // Ваш іконковий компонент
 							),
+							headerShown: false,
 						}}
 					>
 						{() => <Home2 {...commonProps} />}
@@ -216,6 +213,7 @@ export default function Home() {
 							tabBarIcon: ({ color, size }) => (
 								<Icon name='settings' size={size} color={color} /> // Ваш іконковий компонент
 							),
+							headerShown: false,
 						}}
 					>
 						{() => <Home3 {...commonProps} />}
