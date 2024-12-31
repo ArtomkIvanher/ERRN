@@ -7,6 +7,7 @@ import {
 	RefreshControl,
 	StyleSheet,
 	Text,
+	TextInput,
 	View,
 } from 'react-native'
 import ResetDB from './ResetDB'
@@ -21,15 +22,14 @@ export default function Home3({
 	schedule,
 	authUser,
 	autoSaveInterval,
+	onAutoSaveIntervalChange,
 	isUnsavedChanges,
 	refreshing,
 	onRefresh,
-	onSaveChanges,
 	onDataChange,
-	onAutoSaveIntervalChange,
-	onAutoSaveComplete,
 	onSignOut,
 	setSchedule,
+	handleAutoSaveIntervalChange
 }) {
 	const [showPicker, setShowPicker] = useState(false) // Контролює видимість календаря
 	const [selectedDate, setSelectedDate] = useState(new Date()) // Обрана дата
@@ -82,6 +82,17 @@ export default function Home3({
 					<Text style={styles.title}>
 						Розклад користувача: {authUser.email}
 					</Text>
+
+					{/* Налаштування інтервалу автозбереження */}
+					<View style={styles.inputContainer}>
+						<Text>Інтервал автозбереження (секунди):</Text>
+						<TextInput
+							style={styles.input}
+							keyboardType='number-pad'
+							value={String(autoSaveInterval)}
+							onChangeText={value => handleAutoSaveIntervalChange(Number(value))}
+						/>
+					</View>
 
 					<SubjectsManager
 						subjects={schedule.subjects}
@@ -179,6 +190,14 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		alignItems: 'center',
 		marginBottom: 20,
+	},
+	input: {
+		borderWidth: 1,
+		borderColor: '#ccc',
+		padding: 10,
+		borderRadius: 5,
+		width: '50%',
+		textAlign: 'center',
 	},
 	pickerContainer: {
 		marginTop: 10,
