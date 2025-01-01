@@ -99,7 +99,7 @@ export default function Home3({
 						setSubjects={subjects => {
 							const updatedSchedule = { ...schedule, subjects }
 							setSchedule(updatedSchedule)
-							onDataChange(updatedSchedule) // Передаємо оновлений розклад
+							onDataChange(updatedSchedule) // Передаємо оновлений  провірка 2
 						}}
 						onAddSubject={newSubject => {
 							const updatedSubjects = [
