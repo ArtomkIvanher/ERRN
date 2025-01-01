@@ -2,7 +2,7 @@
   "expo": {
     "name": "errn",
     "slug": "errn",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -19,10 +19,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.artomk.errn"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "08837e85-41df-4189-b027-1d80bb4a3462"
+      }
+    },
+    "owner": "artomk"
   }
 }
