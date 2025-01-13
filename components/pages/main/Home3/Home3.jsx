@@ -13,6 +13,7 @@ import {
 import ResetDB from './ResetDB'
 import ScheduleManager from './ScheduleManager'
 import SubjectsManager from './SubjectsManager'
+import BreaksManager from './BreaksManager';
 
 // Для веб-версії
 import DatePicker from 'react-datepicker'
@@ -29,7 +30,7 @@ export default function Home3({
 	onDataChange,
 	onSignOut,
 	setSchedule,
-	handleAutoSaveIntervalChange
+	handleAutoSaveIntervalChange,
 }) {
 	const [showPicker, setShowPicker] = useState(false) // Контролює видимість календаря
 	const [selectedDate, setSelectedDate] = useState(new Date()) // Обрана дата
@@ -90,9 +91,20 @@ export default function Home3({
 							style={styles.input}
 							keyboardType='number-pad'
 							value={String(autoSaveInterval)}
-							onChangeText={value => handleAutoSaveIntervalChange(Number(value))}
+							onChangeText={value =>
+								handleAutoSaveIntervalChange(Number(value))
+							}
 						/>
 					</View>
+
+					<BreaksManager
+						breaks={schedule.breaks}
+						setBreaks={breaks => {
+							const updatedSchedule = { ...schedule, breaks }
+							setSchedule(updatedSchedule)
+							onDataChange(updatedSchedule)
+						}}
+					/>
 
 					<SubjectsManager
 						subjects={schedule.subjects}

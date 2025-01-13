@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { signOut } from 'firebase/auth'
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Button, StyleSheet, View } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { auth } from '../../../../firebase'
 import { getSchedule, saveSchedule } from '../../../../firestore'
@@ -39,24 +39,24 @@ export default function Home() {
 		return () => clearInterval(timerRef.current)
 	}, [isUnsavedChanges, autoSaveInterval])
 
+	useEffect(() => {
+		if (schedule?.start_time && schedule?.duration && schedule?.breaks) {
+			calculateLessonTimes(schedule.start_time, schedule.duration, schedule.breaks);
+		}
+	}, [schedule?.start_time, schedule?.duration, schedule?.breaks]);
+	
+
 	// Завантаження розкладу з Firebase
 	const loadSchedule = async userId => {
 		try {
-			const userSchedule = await getSchedule(userId)
-			const loadedSchedule = userSchedule || {
-				auto_save: 30,
-				subjects: [],
-				schedule: [],
-				starting_week: 1, // За замовчуванням перший тиждень
-			}
-			setSchedule(loadedSchedule)
-			setStartingWeek(loadedSchedule.starting_week || 1)
-			setAutoSaveInterval(loadedSchedule.auto_save || 30)
-			calculateLessonTimes(
-				loadedSchedule.start_time,
-				loadedSchedule.duration,
-				loadedSchedule.breaks
-			)
+			// Отримання розкладу за допомогою Firebase-функції
+			const schedule = await getSchedule(userId)
+
+			// Встановлення станів на основі отриманих даних
+			setSchedule(schedule)
+			setStartingWeek(schedule.starting_week)
+			setAutoSaveInterval(schedule.auto_save)
+
 		} catch (error) {
 			console.error('Помилка завантаження розкладу:', error)
 		}
@@ -95,7 +95,6 @@ export default function Home() {
 					currentTime.getTime() + duration * 60 * 1000
 				)
 				times.push({
-					lesson: index + 1,
 					start: currentTime.toLocaleTimeString([], {
 						hour: '2-digit',
 						minute: '2-digit',
@@ -168,7 +167,6 @@ export default function Home() {
 	return (
 		<View style={{ flex: 1 }}>
 			<View style={styles.container}>
-
 				{/* Кнопка "Зберегти зараз" */}
 				{isUnsavedChanges && (
 					<Button title='Зберегти зараз' onPress={handleSaveChanges} />
