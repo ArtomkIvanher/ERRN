@@ -8,12 +8,13 @@ import {
 	StyleSheet,
 	Text,
 	TextInput,
+	TouchableOpacity,
 	View,
 } from 'react-native'
+import BreaksManager from './BreaksManager'
 import ResetDB from './ResetDB'
 import ScheduleManager from './ScheduleManager'
 import SubjectsManager from './SubjectsManager'
-import BreaksManager from './BreaksManager';
 
 // Для веб-версії
 import DatePicker from 'react-datepicker'
@@ -34,6 +35,8 @@ export default function Home3({
 }) {
 	const [showPicker, setShowPicker] = useState(false) // Контролює видимість календаря
 	const [selectedDate, setSelectedDate] = useState(new Date()) // Обрана дата
+	const [tempAutoSaveInterval, setTempAutoSaveInterval] =
+		useState(autoSaveInterval) // Тимчасове значення інтервалу
 
 	// Ініціалізація дати з Firebase
 	useEffect(() => {
@@ -75,6 +78,25 @@ export default function Home3({
 		})
 	}
 
+	// Функція для обробки підтвердження інтервалу автозбереження
+	const confirmAutoSaveInterval = () => {
+		const correctedInterval =
+			tempAutoSaveInterval < 30 ? 30 : tempAutoSaveInterval
+		setTempAutoSaveInterval(correctedInterval) // Оновлюємо стан, щоб змінити значення в полі
+		handleAutoSaveIntervalChange(correctedInterval) // Передаємо оновлене значення
+	}
+
+	const isValueChanged = tempAutoSaveInterval !== autoSaveInterval;
+
+	// Перевірка наявності даних
+	if (!schedule || !authUser) {
+		return (
+			<View style={styles.loadingContainer}>
+				<Text>Завантаження даних...</Text>
+			</View>
+		)
+	}
+
 	return (
 		<FlatList
 			data={[{}]}
@@ -90,11 +112,20 @@ export default function Home3({
 						<TextInput
 							style={styles.input}
 							keyboardType='number-pad'
-							value={String(autoSaveInterval)}
-							onChangeText={value =>
-								handleAutoSaveIntervalChange(Number(value))
-							}
+							value={String(tempAutoSaveInterval)}
+							onChangeText={value => setTempAutoSaveInterval(Number(value))}
 						/>
+
+						<TouchableOpacity
+							style={[
+								styles.confirmButton,
+								!isValueChanged && styles.disabledButton,
+							]}
+							onPress={confirmAutoSaveInterval}
+							disabled={!isValueChanged}
+						>
+							<Text style={styles.confirmButtonText}>Підтвердити</Text>
+						</TouchableOpacity>
 					</View>
 
 					<BreaksManager
@@ -225,5 +256,21 @@ const styles = StyleSheet.create({
 	signOutContainer: {
 		marginTop: 20,
 		alignItems: 'center',
+	},
+	confirmButton: {
+		backgroundColor: '#007bff',
+		paddingVertical: 15,
+		paddingHorizontal: 20,
+		borderRadius: 10,
+		alignItems: 'center',
+		marginTop: 10,
+	},
+	confirmButtonText: {
+		color: '#fff',
+		fontWeight: 'bold',
+		fontSize: 16,
+	},
+	disabledButton: {
+		backgroundColor: '#ccc',
 	},
 })
