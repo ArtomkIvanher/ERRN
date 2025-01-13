@@ -52,10 +52,6 @@ export default function SubjectsManager({
 		return <Text>Loading subjects...</Text>
 	}
 
-	if (!Array.isArray(subjects) || subjects.length === 0) {
-		return <Text>No subjects available</Text>
-	}
-
 	return (
 		<ScrollView>
 			<View style={styles.container}>
@@ -80,7 +76,9 @@ export default function SubjectsManager({
 						setNewSubject({ ...newSubject, zoom_link: text })
 					}
 				/>
-				<Button title='Додати предмет' onPress={handleAddSubject} />
+				<TouchableOpacity style={styles.addButton} onPress={handleAddSubject}>
+					<Text style={styles.addButtonText}>Додати предмет</Text>
+				</TouchableOpacity>
 
 				<Text style={styles.subHeader}>Список предметів:</Text>
 				<FlatList
@@ -146,33 +144,43 @@ const styles = StyleSheet.create({
 	container: {
 		padding: 20,
 		backgroundColor: '#f9f9f9',
+		flex: 1,
 	},
 	header: {
-		fontSize: 20,
+		fontSize: 24,
 		fontWeight: 'bold',
-		marginBottom: 10,
+		color: '#333',
+		marginBottom: 20,
+		textAlign: 'center',
 	},
 	subHeader: {
 		fontSize: 18,
 		fontWeight: '600',
+		color: '#555',
 		marginTop: 20,
 		marginBottom: 10,
 	},
 	input: {
 		borderWidth: 1,
 		borderColor: '#ccc',
-		padding: 10,
-		marginBottom: 10,
-		borderRadius: 5,
+		padding: 12,
+		marginBottom: 15,
+		borderRadius: 8,
 		backgroundColor: '#fff',
+		fontSize: 16,
 	},
 	subjectItem: {
 		marginBottom: 15,
-		padding: 10,
+		padding: 15,
 		backgroundColor: '#fff',
-		borderRadius: 5,
+		borderRadius: 10,
 		borderWidth: 1,
 		borderColor: '#ddd',
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 3,
+		elevation: 3, // Для Android
 	},
 	subjectDetails: {
 		marginBottom: 10,
@@ -180,6 +188,7 @@ const styles = StyleSheet.create({
 	subjectText: {
 		fontSize: 16,
 		fontWeight: '500',
+		color: '#333',
 	},
 	actions: {
 		flexDirection: 'row',
@@ -189,5 +198,31 @@ const styles = StyleSheet.create({
 	actionButton: {
 		color: '#007BFF',
 		fontWeight: '600',
+		fontSize: 14,
+		padding: 5,
+	},
+	addButton: {
+		backgroundColor: '#28a745',
+		padding: 15,
+		borderRadius: 8,
+		alignItems: 'center',
+		marginTop: 10,
+	},
+	addButtonText: {
+		color: '#fff',
+		fontWeight: '600',
+		fontSize: 16,
+	},
+	cancelButton: {
+		backgroundColor: '#dc3545',
+		padding: 10,
+		borderRadius: 8,
+		alignItems: 'center',
+		marginTop: 10,
+	},
+	cancelButtonText: {
+		color: '#fff',
+		fontWeight: '600',
+		fontSize: 16,
 	},
 })

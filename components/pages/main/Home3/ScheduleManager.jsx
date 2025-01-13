@@ -128,7 +128,6 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 						</TouchableOpacity>
 					))}
 				</View>
-				<Text>Зараз вибрано: {schedule.repeat} тижні(нь)</Text>
 			</View>
 
 			{schedule.schedule.map((day, dayIndex) => (
