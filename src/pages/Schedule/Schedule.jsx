@@ -9,7 +9,7 @@ import {
 
 const screenWidth = Dimensions.get('window').width
 
-export default function DynamicDayRenderer({ schedule, lessonTimes }) {
+export default function Schedule({ schedule, lessonTimes }) {
 	const [currentDate, setCurrentDate] = useState(new Date())
 
 	const daysOfWeek = [
@@ -47,6 +47,7 @@ export default function DynamicDayRenderer({ schedule, lessonTimes }) {
 		const currentWeek = calculateCurrentWeek(date)
 		return schedule.schedule[dayIndex]?.[`week${currentWeek}`] || []
 	}
+
 
 	const renderDay = date => {
 		const scheduleForDay = getDaySchedule(date)

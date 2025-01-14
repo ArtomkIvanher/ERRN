@@ -2,9 +2,9 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { onAuthStateChanged } from 'firebase/auth'
 import React, { useEffect, useState } from 'react'
-import SignIn from './components/pages/auth/SignIn'
-import SignUp from './components/pages/auth/SignUp'
-import Home from './components/pages/main/Home/Home'
+import SignIn from './src/auth/SignIn'
+import SignUp from './src/auth/SignUp'
+import MainLayout from './src/pages/MainLayout'
 import { auth } from './firebase'
 
 const Stack = createStackNavigator()
@@ -24,9 +24,9 @@ export default function App() {
 			<Stack.Navigator>
 				{user ? (
 					<Stack.Screen
-						name='Home'
-						component={Home}
-						options={{ title: 'Home' }}
+						name='MainLayout'
+						component={MainLayout}
+						options={{ title: 'MainLayout' }}
 					/>
 				) : (
 					<>

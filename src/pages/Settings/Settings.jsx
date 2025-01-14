@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import AutoSaveIntervalSettings from './AutoSaveIntervalSettings'
-import SignOutButton from './SignOutButton'
+import AutoSaveIntervalSettings from './components/AutoSaveIntervalSettings'
+import SignOutButton from './components/SignOutButton'
 
 const Settings = ({ autoSaveInterval, handleAutoSaveIntervalChange }) => {
 	return (

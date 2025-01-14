@@ -9,16 +9,16 @@ import {
 	Text,
 	View,
 } from 'react-native'
-import BreaksManager from './BreaksManager'
-import ResetDB from './ResetDB'
-import ScheduleManager from './ScheduleManager'
-import SubjectsManager from './SubjectsManager'
+import BreaksManager from './components/BreaksManager'
+import ResetDB from './components/ResetDB'
+import ScheduleManager from './components/ScheduleManager'
+import SubjectsManager from './components/SubjectsManager'
 
 // Для веб-версії
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
-export default function Home3({
+export default function ScheduleSettings({
 	schedule,
 	authUser,
 	autoSaveInterval,
