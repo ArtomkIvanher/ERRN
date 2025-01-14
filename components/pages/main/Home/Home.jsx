@@ -8,6 +8,7 @@ import { getSchedule, saveSchedule } from '../../../../firestore'
 import Home2 from '../Home2/Home2'
 import AutoSaveManager from '../Home3/AutoSaveManager'
 import Home3 from '../Home3/Home3'
+import Settings from '../Settings/Settings'
 
 const Tab = createBottomTabNavigator()
 
@@ -30,21 +31,14 @@ export default function Home() {
 	}, [])
 
 	useEffect(() => {
-		if (isUnsavedChanges) {
-			timerRef.current = setInterval(
-				() => handleSaveChanges(),
-				autoSaveInterval * 1000
+		if (schedule?.start_time && schedule?.duration && schedule?.breaks) {
+			calculateLessonTimes(
+				schedule.start_time,
+				schedule.duration,
+				schedule.breaks
 			)
 		}
-		return () => clearInterval(timerRef.current)
-	}, [isUnsavedChanges, autoSaveInterval])
-
-	useEffect(() => {
-		if (schedule?.start_time && schedule?.duration && schedule?.breaks) {
-			calculateLessonTimes(schedule.start_time, schedule.duration, schedule.breaks);
-		}
-	}, [schedule?.start_time, schedule?.duration, schedule?.breaks]);
-	
+	}, [schedule?.start_time, schedule?.duration, schedule?.breaks])
 
 	// Завантаження розкладу з Firebase
 	const loadSchedule = async userId => {
@@ -56,7 +50,6 @@ export default function Home() {
 			setSchedule(schedule)
 			setStartingWeek(schedule.starting_week)
 			setAutoSaveInterval(schedule.auto_save)
-
 		} catch (error) {
 			console.error('Помилка завантаження розкладу:', error)
 		}
@@ -135,15 +128,6 @@ export default function Home() {
 		setIsUnsavedChanges(true)
 	}
 
-	const handleSignOut = async () => {
-		try {
-			await signOut(auth)
-			console.log('Вихід виконано успішно')
-		} catch (error) {
-			console.error('Помилка виходу:', error.message)
-		}
-	}
-
 	const handleDataChange = updatedSchedule => {
 		setSchedule(updatedSchedule)
 		setIsUnsavedChanges(true)
@@ -156,7 +140,6 @@ export default function Home() {
 		isUnsavedChanges,
 		setSchedule,
 		handleSaveChanges,
-		onSignOut: handleSignOut,
 		onDataChange: handleDataChange,
 		lessonTimes,
 		updateStartingWeek,
@@ -216,20 +199,29 @@ export default function Home() {
 					>
 						{() => <Home3 {...commonProps} />}
 					</Tab.Screen>
+
+					<Tab.Screen
+						name='AccountSettings'
+						options={{
+							tabBarLabel: 'Акаунт',
+							tabBarIcon: ({ color, size }) => (
+								<Icon name='person' size={size} color={color} />
+							),
+							headerShown: false,
+						}}
+					>
+						{() => <Settings {...commonProps} />}
+					</Tab.Screen>
 				</Tab.Navigator>
 			</View>
-
-			{/* Таймер автозбереження поверх всього */}
-			{isUnsavedChanges && (
-				<AutoSaveManager
-					authUser={authUser}
-					schedule={schedule}
-					saveSchedule={handleSaveChanges}
-					onAutoSaveComplete={() => setIsUnsavedChanges(false)}
-					isUnsavedChanges={isUnsavedChanges}
-					autoSaveInterval={autoSaveInterval}
-				/>
-			)}
+			<AutoSaveManager
+				authUser={authUser}
+				schedule={schedule}
+				handleSaveChanges={handleSaveChanges}
+				onAutoSaveComplete={() => setIsUnsavedChanges(false)}
+				isUnsavedChanges={isUnsavedChanges}
+				autoSaveInterval={autoSaveInterval}
+			/>
 		</View>
 	)
 }

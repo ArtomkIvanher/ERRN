@@ -7,8 +7,6 @@ import {
 	RefreshControl,
 	StyleSheet,
 	Text,
-	TextInput,
-	TouchableOpacity,
 	View,
 } from 'react-native'
 import BreaksManager from './BreaksManager'
@@ -24,14 +22,10 @@ export default function Home3({
 	schedule,
 	authUser,
 	autoSaveInterval,
-	onAutoSaveIntervalChange,
-	isUnsavedChanges,
 	refreshing,
 	onRefresh,
 	onDataChange,
-	onSignOut,
 	setSchedule,
-	handleAutoSaveIntervalChange,
 }) {
 	const [showPicker, setShowPicker] = useState(false) // Контролює видимість календаря
 	const [selectedDate, setSelectedDate] = useState(new Date()) // Обрана дата
@@ -78,16 +72,6 @@ export default function Home3({
 		})
 	}
 
-	// Функція для обробки підтвердження інтервалу автозбереження
-	const confirmAutoSaveInterval = () => {
-		const correctedInterval =
-			tempAutoSaveInterval < 30 ? 30 : tempAutoSaveInterval
-		setTempAutoSaveInterval(correctedInterval) // Оновлюємо стан, щоб змінити значення в полі
-		handleAutoSaveIntervalChange(correctedInterval) // Передаємо оновлене значення
-	}
-
-	const isValueChanged = tempAutoSaveInterval !== autoSaveInterval;
-
 	// Перевірка наявності даних
 	if (!schedule || !authUser) {
 		return (
@@ -105,28 +89,6 @@ export default function Home3({
 					<Text style={styles.title}>
 						Розклад користувача: {authUser.email}
 					</Text>
-
-					{/* Налаштування інтервалу автозбереження */}
-					<View style={styles.inputContainer}>
-						<Text>Інтервал автозбереження (секунди):</Text>
-						<TextInput
-							style={styles.input}
-							keyboardType='number-pad'
-							value={String(tempAutoSaveInterval)}
-							onChangeText={value => setTempAutoSaveInterval(Number(value))}
-						/>
-
-						<TouchableOpacity
-							style={[
-								styles.confirmButton,
-								!isValueChanged && styles.disabledButton,
-							]}
-							onPress={confirmAutoSaveInterval}
-							disabled={!isValueChanged}
-						>
-							<Text style={styles.confirmButtonText}>Підтвердити</Text>
-						</TouchableOpacity>
-					</View>
 
 					<BreaksManager
 						breaks={schedule.breaks}
@@ -204,10 +166,6 @@ export default function Home3({
 					</View>
 
 					<ResetDB />
-
-					<View style={styles.signOutContainer}>
-						<Button title='Вийти з акаунту' color='red' onPress={onSignOut} />
-					</View>
 				</View>
 			)}
 			keyExtractor={(_, index) => String(index)}
