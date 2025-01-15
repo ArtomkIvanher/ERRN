@@ -102,20 +102,20 @@ export default function ScheduleSettings({
 					/>
 
 					<TeachersManager
-						teachers={schedule.teacher}
+						teachers={schedule.teachers}
 						setTeachers={updatedTeachers => {
-							const updatedSchedule = { ...schedule, teacher: updatedTeachers }
+							const updatedSchedule = { ...schedule, teachers: updatedTeachers }
 							setSchedule(updatedSchedule)
 							onDataChange(updatedSchedule) // Передаємо оновлений розклад
 						}}
 						onAddTeacher={newTeacher => {
 							const updatedTeachers = [
-								...schedule.teacher,
+								...schedule.teachers,
 								{ ...newTeacher, id: Date.now() },
 							]
 							const updatedSchedule = {
 								...schedule,
-								teacher: updatedTeachers,
+								teachers: updatedTeachers,
 							}
 							setSchedule(updatedSchedule)
 							onDataChange(updatedSchedule) // Передаємо оновлений розклад
@@ -141,7 +141,7 @@ export default function ScheduleSettings({
 							setSchedule(updatedSchedule)
 							onDataChange(updatedSchedule) // Передаємо оновлений розклад
 						}}
-						teachers={schedule.teacher} // Передаємо список учителів у SubjectsManager
+						teachers={schedule.teachers} // Передаємо список учителів у SubjectsManager
 					/>
 
 					<ScheduleManager
