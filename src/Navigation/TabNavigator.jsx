@@ -1,6 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import Icon from 'react-native-vector-icons/Ionicons'
+import themes from '../config/themes'
 import Schedule from '../pages/Schedule/Schedule'
 import ScheduleSettings from '../pages/ScheduleSettings/ScheduleSettings'
 import Settings from '../pages/Settings/Settings'
@@ -8,11 +9,15 @@ import Settings from '../pages/Settings/Settings'
 const Tab = createBottomTabNavigator()
 
 export default function TabNavigator({ commonProps }) {
+	const [currentTheme, accentColor] = commonProps.theme || ['light', 'blue']
+	const themeColors = themes[currentTheme] || themes.light
+	const accent = themes.accentColors[accentColor] || themes.accentColors.blue
+
 	return (
 		<Tab.Navigator
 			screenOptions={{
 				tabBarStyle: {
-					backgroundColor: '#fff', // Колір фону панелі
+					backgroundColor: themeColors.backgroundColor, // Фон панелі з теми
 					borderTopWidth: 1, // Ширина верхнього бордера
 					borderTopColor: '#ddd', // Колір верхнього бордера
 					paddingBottom: 15, // Відступ знизу
@@ -22,10 +27,10 @@ export default function TabNavigator({ commonProps }) {
 				tabBarLabelStyle: {
 					fontSize: 12, // Розмір тексту
 					fontWeight: 'bold', // Жирність тексту
-					color: '#333', // Колір тексту
+					color: themeColors.textColor, // Колір тексту з теми
 				},
-				tabBarActiveTintColor: '#007AFF', // Колір активної вкладки
-				tabBarInactiveTintColor: '#8e8e93', // Колір неактивних вкладок
+				tabBarActiveTintColor: accent, // Колір активної вкладки
+				tabBarInactiveTintColor: themeColors.textColor, // Колір неактивних вкладок
 			}}
 		>
 			<Tab.Screen
@@ -33,7 +38,7 @@ export default function TabNavigator({ commonProps }) {
 				options={{
 					tabBarLabel: 'Розклад', // Текст під вкладкою
 					tabBarIcon: ({ color, size }) => (
-						<Icon name='calendar' size={size} color={color} /> // Ваш іконковий компонент
+						<Icon name='calendar' size={size} color={color} /> // Іконка
 					),
 					headerShown: false,
 				}}
@@ -45,7 +50,7 @@ export default function TabNavigator({ commonProps }) {
 				options={{
 					tabBarLabel: 'Налаштування', // Текст під вкладкою
 					tabBarIcon: ({ color, size }) => (
-						<Icon name='settings' size={size} color={color} /> // Ваш іконковий компонент
+						<Icon name='settings' size={size} color={color} /> // Іконка
 					),
 					headerShown: false,
 				}}

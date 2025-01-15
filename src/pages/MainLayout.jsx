@@ -5,6 +5,7 @@ import { auth } from '../../firebase'
 import { getSchedule, saveSchedule } from '../../firestore'
 import AutoSaveManager from '../components/AutoSaveManager'
 import TabNavigator from '../Navigation/TabNavigator'
+import themes from '../config/themes'
 
 const Tab = createBottomTabNavigator()
 
@@ -15,7 +16,7 @@ export default function MainLayout() {
 	const [isUnsavedChanges, setIsUnsavedChanges] = useState(false) // Чи є незбережені зміни
 	const [lessonTimes, setLessonTimes] = useState([]) // Масив часу пар
 	const [startingWeek, setStartingWeek] = useState(1) // Початковий тиждень
-	const [theme, setTheme] = useState(['light', 'blue'])
+	const [theme, setTheme] = useState(null) // Тема завантажується з бази
 	const timerRef = useRef(null)
 
 	// Завантаження користувача та даних
@@ -40,13 +41,17 @@ export default function MainLayout() {
 	// Завантаження розкладу з Firebase
 	const loadSchedule = async userId => {
 		try {
-			// Отримання розкладу за допомогою Firebase-функції
 			const schedule = await getSchedule(userId)
 
 			// Встановлення станів на основі отриманих даних
 			setSchedule(schedule)
 			setStartingWeek(schedule.starting_week)
 			setAutoSaveInterval(schedule.auto_save)
+
+			// Встановлення теми, якщо вона існує в розкладі
+			if (schedule.theme) {
+				setTheme(schedule.theme)
+			}
 			console.log(schedule)
 		} catch (error) {
 			console.error('Помилка завантаження розкладу:', error)
