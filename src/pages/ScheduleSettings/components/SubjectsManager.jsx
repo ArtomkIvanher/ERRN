@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import {
-	Button,
 	FlatList,
-	ScrollView,
+	Modal,
+	Pressable,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -14,215 +14,251 @@ export default function SubjectsManager({
 	subjects,
 	setSubjects,
 	onAddSubject,
+	teachers,
 }) {
 	const [newSubject, setNewSubject] = useState({
 		name: '',
 		teacher: '',
 		zoom_link: '',
 	})
-	const [editingSubject, setEditingSubject] = useState(null)
+
+	const [isModalVisible, setIsModalVisible] = useState(false)
+	const [isEditMode, setIsEditMode] = useState(false)
+	const [editSubjectId, setEditSubjectId] = useState(null)
+	const [selectedTeacher, setSelectedTeacher] = useState('')
+
+	// Знаходимо ім'я вчителя за ID
+	const getTeacherName = teacherId => {
+		const teacher = teachers.find(t => t.id === teacherId)
+		return teacher ? teacher.name : 'Unknown Teacher'
+	}
 
 	const handleAddSubject = () => {
-		onAddSubject(newSubject)
+		if (newSubject.teacher === '') {
+			alert('Please select a teacher.')
+			return
+		}
+		if (isEditMode) {
+			// Редагування предмета
+			setSubjects(
+				subjects.map(subject =>
+					subject.id === editSubjectId ? { ...subject, ...newSubject } : subject
+				)
+			)
+			setIsEditMode(false)
+			setEditSubjectId(null)
+		} else {
+			// Додавання нового предмета
+			onAddSubject(newSubject)
+		}
 		setNewSubject({ name: '', teacher: '', zoom_link: '' })
+	}
+
+	const handleEditSubject = subject => {
+		setNewSubject({
+			name: subject.name,
+			teacher: subject.teacher,
+			zoom_link: subject.zoom_link,
+		})
+		setSelectedTeacher(getTeacherName(subject.teacher))
+		setIsEditMode(true)
+		setEditSubjectId(subject.id)
 	}
 
 	const handleRemoveSubject = id => {
 		setSubjects(subjects.filter(subject => subject.id !== id))
 	}
 
-	const handleEditSubject = subject => {
-		setEditingSubject(subject)
+	// Відкриваємо/закриваємо модальне вікно для вибору вчителя
+	const toggleModal = () => {
+		setIsModalVisible(!isModalVisible)
 	}
 
-	const handleSaveEdit = () => {
-		setSubjects(
-			subjects.map(subject =>
-				subject.id === editingSubject.id ? editingSubject : subject
-			)
-		)
-		setEditingSubject(null)
-	}
-
-	const handleCancelEdit = () => {
-		setEditingSubject(null)
-	}
-
-	if (!subjects) {
-		return <Text>Loading subjects...</Text>
+	// Оновлюємо ID вчителя, коли він вибраний
+	const handleTeacherSelect = teacherId => {
+		setNewSubject({ ...newSubject, teacher: teacherId })
+		setSelectedTeacher(getTeacherName(teacherId)) // Встановлюємо ім'я вибраного вчителя
+		toggleModal() // Закриваємо модальне вікно
 	}
 
 	return (
-		<ScrollView>
-			<View style={styles.container}>
-				<Text style={styles.header}>Додати новий предмет</Text>
-				<TextInput
-					style={styles.input}
-					placeholder='Назва предмету'
-					value={newSubject.name}
-					onChangeText={text => setNewSubject({ ...newSubject, name: text })}
-				/>
-				<TextInput
-					style={styles.input}
-					placeholder='Викладач'
-					value={newSubject.teacher}
-					onChangeText={text => setNewSubject({ ...newSubject, teacher: text })}
-				/>
-				<TextInput
-					style={styles.input}
-					placeholder='Zoom лінк'
-					value={newSubject.zoom_link}
-					onChangeText={text =>
-						setNewSubject({ ...newSubject, zoom_link: text })
-					}
-				/>
-				<TouchableOpacity style={styles.addButton} onPress={handleAddSubject}>
-					<Text style={styles.addButtonText}>Додати предмет</Text>
-				</TouchableOpacity>
+		<View style={styles.container}>
+			<Text style={styles.header}>Manage Subjects</Text>
+			<TextInput
+				style={styles.input}
+				placeholder='Subject Name'
+				value={newSubject.name}
+				onChangeText={text => setNewSubject({ ...newSubject, name: text })}
+			/>
 
-				<Text style={styles.subHeader}>Список предметів:</Text>
-				<FlatList
-					data={subjects}
-					keyExtractor={item => item.id.toString()}
-					renderItem={({ item }) => (
-						<View style={styles.subjectItem}>
-							{editingSubject && editingSubject.id === item.id ? (
-								<View>
-									<TextInput
-										style={styles.input}
-										placeholder='Назва предмету'
-										value={editingSubject.name}
-										onChangeText={text =>
-											setEditingSubject({ ...editingSubject, name: text })
-										}
-									/>
-									<TextInput
-										style={styles.input}
-										placeholder='Викладач'
-										value={editingSubject.teacher}
-										onChangeText={text =>
-											setEditingSubject({ ...editingSubject, teacher: text })
-										}
-									/>
-									<TextInput
-										style={styles.input}
-										placeholder='Zoom лінк'
-										value={editingSubject.zoom_link}
-										onChangeText={text =>
-											setEditingSubject({ ...editingSubject, zoom_link: text })
-										}
-									/>
-									<Button title='Зберегти' onPress={handleSaveEdit} />
-									<Button title='Скасувати' onPress={handleCancelEdit} />
-								</View>
-							) : (
-								<View style={styles.subjectDetails}>
-									<Text style={styles.subjectText}>
-										{item.name} - {item.teacher}
-									</Text>
-									<View style={styles.actions}>
-										<TouchableOpacity onPress={() => handleEditSubject(item)}>
-											<Text style={styles.actionButton}>Редагувати</Text>
-										</TouchableOpacity>
-										<TouchableOpacity
-											onPress={() => handleRemoveSubject(item.id)}
-										>
-											<Text style={styles.actionButton}>Видалити</Text>
-										</TouchableOpacity>
-									</View>
-								</View>
+			<TouchableOpacity style={styles.input} onPress={toggleModal}>
+				<Text style={styles.teacherText}>
+					{selectedTeacher ? selectedTeacher : 'Select Teacher'}
+				</Text>
+			</TouchableOpacity>
+
+			<TextInput
+				style={styles.input}
+				placeholder='Zoom Link'
+				value={newSubject.zoom_link}
+				onChangeText={text => setNewSubject({ ...newSubject, zoom_link: text })}
+			/>
+
+			<TouchableOpacity style={styles.addButton} onPress={handleAddSubject}>
+				<Text style={styles.addButtonText}>
+					{isEditMode ? 'Save Changes' : 'Add Subject'}
+				</Text>
+			</TouchableOpacity>
+
+			<Modal
+				transparent={true}
+				visible={isModalVisible}
+				animationType='slide'
+				onRequestClose={toggleModal}
+			>
+				<View style={styles.modalOverlay}>
+					<View style={styles.modalContent}>
+						<Text style={styles.modalHeader}>Select Teacher</Text>
+						<FlatList
+							data={teachers}
+							keyExtractor={item => item.id.toString()}
+							renderItem={({ item }) => (
+								<Pressable
+									style={styles.teacherItem}
+									onPress={() => handleTeacherSelect(item.id)}
+								>
+									<Text style={styles.teacherText}>{item.name}</Text>
+								</Pressable>
 							)}
+						/>
+						<TouchableOpacity
+							style={styles.closeModalButton}
+							onPress={toggleModal}
+						>
+							<Text style={styles.closeModalButtonText}>Close</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+
+			<FlatList
+				data={subjects}
+				keyExtractor={item => item.id.toString()}
+				renderItem={({ item }) => (
+					<View style={styles.subjectItem}>
+						<Text style={styles.subjectText}>
+							{item.name} - {getTeacherName(item.teacher)}
+						</Text>
+						<View style={styles.actionButtons}>
+							<TouchableOpacity
+								onPress={() => handleEditSubject(item)}
+								style={styles.editButton}
+							>
+								<Text style={styles.actionButtonText}>Edit</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => handleRemoveSubject(item.id)}
+								style={styles.removeButton}
+							>
+								<Text style={styles.actionButtonText}>Remove</Text>
+							</TouchableOpacity>
 						</View>
-					)}
-				/>
-			</View>
-		</ScrollView>
+					</View>
+				)}
+			/>
+		</View>
 	)
 }
 
 const styles = StyleSheet.create({
 	container: {
 		padding: 20,
-		backgroundColor: '#f9f9f9',
-		flex: 1,
 	},
 	header: {
 		fontSize: 24,
 		fontWeight: 'bold',
-		color: '#333',
 		marginBottom: 20,
-		textAlign: 'center',
-	},
-	subHeader: {
-		fontSize: 18,
-		fontWeight: '600',
-		color: '#555',
-		marginTop: 20,
-		marginBottom: 10,
 	},
 	input: {
 		borderWidth: 1,
-		borderColor: '#ccc',
-		padding: 12,
+		padding: 10,
 		marginBottom: 15,
-		borderRadius: 8,
-		backgroundColor: '#fff',
+		borderRadius: 5,
+	},
+	teacherText: {
+		fontSize: 16,
+		color: '#333',
+	},
+	addButton: {
+		backgroundColor: '#28A745',
+		padding: 10,
+		borderRadius: 5,
+		alignItems: 'center',
+		marginBottom: 15,
+	},
+	addButtonText: {
+		color: '#FFF',
 		fontSize: 16,
 	},
 	subjectItem: {
-		marginBottom: 15,
-		padding: 15,
-		backgroundColor: '#fff',
-		borderRadius: 10,
-		borderWidth: 1,
-		borderColor: '#ddd',
-		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.1,
-		shadowRadius: 3,
-		elevation: 3, // Для Android
-	},
-	subjectDetails: {
 		marginBottom: 10,
+		padding: 10,
+		borderWidth: 1,
+		borderRadius: 5,
+		backgroundColor: '#f9f9f9',
 	},
 	subjectText: {
 		fontSize: 16,
-		fontWeight: '500',
-		color: '#333',
+		marginBottom: 5,
 	},
-	actions: {
+	actionButtons: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		marginTop: 10,
 	},
-	actionButton: {
-		color: '#007BFF',
-		fontWeight: '600',
-		fontSize: 14,
+	editButton: {
+		backgroundColor: '#007BFF',
 		padding: 5,
+		borderRadius: 5,
 	},
-	addButton: {
-		backgroundColor: '#28a745',
-		padding: 15,
-		borderRadius: 8,
+	removeButton: {
+		backgroundColor: '#FF6347',
+		padding: 5,
+		borderRadius: 5,
+	},
+	actionButtonText: {
+		color: '#FFF',
+		fontSize: 14,
+	},
+	modalOverlay: {
+		flex: 1,
+		justifyContent: 'center',
 		alignItems: 'center',
-		marginTop: 10,
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 	},
-	addButtonText: {
-		color: '#fff',
-		fontWeight: '600',
-		fontSize: 16,
+	modalContent: {
+		width: '80%',
+		backgroundColor: '#fff',
+		padding: 20,
+		borderRadius: 10,
 	},
-	cancelButton: {
-		backgroundColor: '#dc3545',
+	modalHeader: {
+		fontSize: 18,
+		fontWeight: 'bold',
+		marginBottom: 10,
+	},
+	teacherItem: {
 		padding: 10,
-		borderRadius: 8,
-		alignItems: 'center',
-		marginTop: 10,
+		borderBottomWidth: 1,
+		borderBottomColor: '#ccc',
 	},
-	cancelButtonText: {
+	closeModalButton: {
+		backgroundColor: '#FF6347',
+		padding: 10,
+		borderRadius: 5,
+		marginTop: 15,
+		alignItems: 'center',
+	},
+	closeModalButtonText: {
 		color: '#fff',
-		fontWeight: '600',
-		fontSize: 16,
 	},
 })

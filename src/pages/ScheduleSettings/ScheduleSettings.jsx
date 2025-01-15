@@ -14,6 +14,8 @@ import ResetDB from './components/ResetDB'
 import ScheduleManager from './components/ScheduleManager'
 import SubjectsManager from './components/SubjectsManager'
 
+import TeachersManager from './components/TeachersManager'
+
 // Для веб-версії
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -99,12 +101,33 @@ export default function ScheduleSettings({
 						}}
 					/>
 
+					<TeachersManager
+						teachers={schedule.teacher}
+						setTeachers={updatedTeachers => {
+							const updatedSchedule = { ...schedule, teacher: updatedTeachers }
+							setSchedule(updatedSchedule)
+							onDataChange(updatedSchedule) // Передаємо оновлений розклад
+						}}
+						onAddTeacher={newTeacher => {
+							const updatedTeachers = [
+								...schedule.teacher,
+								{ ...newTeacher, id: Date.now() },
+							]
+							const updatedSchedule = {
+								...schedule,
+								teacher: updatedTeachers,
+							}
+							setSchedule(updatedSchedule)
+							onDataChange(updatedSchedule) // Передаємо оновлений розклад
+						}}
+					/>
+
 					<SubjectsManager
 						subjects={schedule.subjects}
-						setSubjects={subjects => {
-							const updatedSchedule = { ...schedule, subjects }
+						setSubjects={updatedSubjects => {
+							const updatedSchedule = { ...schedule, subjects: updatedSubjects }
 							setSchedule(updatedSchedule)
-							onDataChange(updatedSchedule) // Передаємо оновлений  провірка 2
+							onDataChange(updatedSchedule) // Передаємо оновлений розклад
 						}}
 						onAddSubject={newSubject => {
 							const updatedSubjects = [
@@ -118,6 +141,7 @@ export default function ScheduleSettings({
 							setSchedule(updatedSchedule)
 							onDataChange(updatedSchedule) // Передаємо оновлений розклад
 						}}
+						teachers={schedule.teacher} // Передаємо список учителів у SubjectsManager
 					/>
 
 					<ScheduleManager

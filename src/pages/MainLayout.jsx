@@ -46,6 +46,7 @@ export default function MainLayout() {
 			setSchedule(schedule)
 			setStartingWeek(schedule.starting_week)
 			setAutoSaveInterval(schedule.auto_save)
+			console.log(schedule)
 		} catch (error) {
 			console.error('Помилка завантаження розкладу:', error)
 		}
