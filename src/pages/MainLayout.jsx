@@ -15,6 +15,7 @@ export default function MainLayout() {
 	const [isUnsavedChanges, setIsUnsavedChanges] = useState(false) // Чи є незбережені зміни
 	const [lessonTimes, setLessonTimes] = useState([]) // Масив часу пар
 	const [startingWeek, setStartingWeek] = useState(1) // Початковий тиждень
+	const [theme, setTheme] = useState(['light', 'blue'])
 	const timerRef = useRef(null)
 
 	// Завантаження користувача та даних
@@ -130,6 +131,12 @@ export default function MainLayout() {
 		setIsUnsavedChanges(true)
 	}
 
+	const handleThemeChange = newTheme => {
+		setTheme(newTheme)
+		setSchedule(prevSchedule => ({ ...prevSchedule, theme: newTheme }))
+		setIsUnsavedChanges(true)
+	}
+
 	const commonProps = {
 		schedule,
 		authUser,
@@ -142,6 +149,8 @@ export default function MainLayout() {
 		updateStartingWeek,
 		startingWeek,
 		handleAutoSaveIntervalChange,
+		theme,
+		onThemeChange: handleThemeChange,
 	}
 
 	return (

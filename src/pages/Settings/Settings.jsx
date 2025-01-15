@@ -2,8 +2,14 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import AutoSaveIntervalSettings from './components/AutoSaveIntervalSettings'
 import SignOutButton from './components/SignOutButton'
+import ThemeSettings from './components/ThemeSettings'
 
-const Settings = ({ autoSaveInterval, handleAutoSaveIntervalChange }) => {
+const Settings = ({
+	autoSaveInterval,
+	handleAutoSaveIntervalChange,
+	theme,
+	onThemeChange,
+}) => {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Налаштування акаунту</Text>
@@ -12,6 +18,8 @@ const Settings = ({ autoSaveInterval, handleAutoSaveIntervalChange }) => {
 				autoSaveInterval={autoSaveInterval}
 				onIntervalChange={handleAutoSaveIntervalChange}
 			/>
+
+			<ThemeSettings currentTheme={theme} onThemeChange={onThemeChange} />
 
 			<SignOutButton />
 		</View>

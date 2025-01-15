@@ -4,6 +4,7 @@ const defaultSchedule = {
 	start_time: '08:30',
 	auto_save: 60,
 	repeat: 1,
+	theme: ['dark', 'red'],
 	subjects: [
 		{
 			id: 1,
