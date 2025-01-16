@@ -5,7 +5,7 @@ import { auth } from '../../firebase'
 import { getSchedule, saveSchedule } from '../../firestore'
 import AutoSaveManager from '../components/AutoSaveManager'
 import TabNavigator from '../Navigation/TabNavigator'
-import themes from '../config/themes'
+import themes from '../config/themes';
 
 const Tab = createBottomTabNavigator()
 
@@ -16,8 +16,13 @@ export default function MainLayout() {
 	const [isUnsavedChanges, setIsUnsavedChanges] = useState(false) // Чи є незбережені зміни
 	const [lessonTimes, setLessonTimes] = useState([]) // Масив часу пар
 	const [startingWeek, setStartingWeek] = useState(1) // Початковий тиждень
-	const [theme, setTheme] = useState(null) // Тема завантажується з бази
 	const timerRef = useRef(null)
+
+	const [theme, setTheme] = useState(['light', 'blue']) // ['currentTheme', 'accentColor']
+
+	const [currentTheme, accentColor] = theme
+	const themeColors = themes[currentTheme] || themes.light
+	const accent = themes.accentColors[accentColor] || themes.accentColors.blue
 
 	// Завантаження користувача та даних
 	useEffect(() => {
@@ -154,8 +159,10 @@ export default function MainLayout() {
 		updateStartingWeek,
 		startingWeek,
 		handleAutoSaveIntervalChange,
-		theme,
 		onThemeChange: handleThemeChange,
+		theme: theme,
+		themeColors: themeColors,
+		accent: accent,
 	}
 
 	return (

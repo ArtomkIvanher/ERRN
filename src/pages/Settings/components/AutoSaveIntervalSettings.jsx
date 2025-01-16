@@ -7,7 +7,12 @@ import {
 	View,
 } from 'react-native'
 
-const AutoSaveIntervalSettings = ({ autoSaveInterval, onIntervalChange }) => {
+const AutoSaveIntervalSettings = ({
+	autoSaveInterval,
+	onIntervalChange,
+	themeColors,
+	accent,
+}) => {
 	const [tempInterval, setTempInterval] = useState(autoSaveInterval)
 
 	const confirmIntervalChange = () => {
@@ -20,19 +25,36 @@ const AutoSaveIntervalSettings = ({ autoSaveInterval, onIntervalChange }) => {
 
 	return (
 		<View style={styles.inputContainer}>
-			<Text>Інтервал автозбереження (секунди):</Text>
+			<Text style={[styles.label, { color: themeColors.textColor }]}>
+				Інтервал автозбереження (секунди):
+			</Text>
 			<TextInput
-				style={styles.input}
+				style={[
+					styles.input,
+					{
+						borderColor: themeColors.textColor2,
+						color: themeColors.textColor,
+					},
+				]}
 				keyboardType='number-pad'
 				value={String(tempInterval)}
 				onChangeText={value => setTempInterval(Number(value))}
 			/>
 			<TouchableOpacity
-				style={[styles.confirmButton, !isValueChanged && styles.disabledButton]}
+				style={[
+					styles.confirmButton,
+					{
+						backgroundColor: isValueChanged
+							? accent
+							: themeColors.backgroundColor2,
+					},
+				]}
 				onPress={confirmIntervalChange}
 				disabled={!isValueChanged}
 			>
-				<Text style={styles.confirmButtonText}>Підтвердити</Text>
+				<Text style={{ color: themeColors.textColor }}>
+					Підтвердити
+				</Text>
 			</TouchableOpacity>
 		</View>
 	)

@@ -6,19 +6,18 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native'
-import themes from '../../config/themes'
 
 const screenWidth = Dimensions.get('window').width
 
-export default function Schedule({ schedule, lessonTimes, theme }) {
+export default function Schedule({
+	schedule,
+	lessonTimes,
+	theme,
+	themeColors,
+	accent,
+	onThemeChange,
+}) {
 	const [currentDate, setCurrentDate] = useState(new Date())
-
-	const [currentTheme, accentColor] = theme || ['light', 'blue']
-	const themeColors =
-		themes[currentTheme] || themes.light
-	const accent =
-		themes.accentColors[accentColor] ||
-		themes.accentColors.blue
 
 	const daysOfWeek = [
 		'Понеділок',
@@ -67,13 +66,13 @@ export default function Schedule({ schedule, lessonTimes, theme }) {
 						return (
 							<View
 								key={index}
-								style={[
-									styles.subjectContainer,
-									{ backgroundColor: accent },
-								]}
+								style={[styles.subjectContainer, { backgroundColor: accent }]}
 							>
 								<Text
-									style={[styles.subjectName, { color: themeColors.textColorScheduleCard }]}
+									style={[
+										styles.subjectName,
+										{ color: themeColors.textColorScheduleCard },
+									]}
 								>
 									Пара {index + 1}: {subject?.name || '—'}
 								</Text>
@@ -99,9 +98,7 @@ export default function Schedule({ schedule, lessonTimes, theme }) {
 						)
 					})
 				) : (
-					<Text
-						style={[styles.noDataText, { color: themeColors.textColor2 }]}
-					>
+					<Text style={[styles.noDataText, { color: themeColors.textColor2 }]}>
 						Немає даних
 					</Text>
 				)}
@@ -134,13 +131,19 @@ export default function Schedule({ schedule, lessonTimes, theme }) {
 			</View>
 			<View style={styles.navigationContainer}>
 				<TouchableOpacity
-					style={[styles.navButton, { backgroundColor: themeColors.backgroundColor2 }]}
+					style={[
+						styles.navButton,
+						{ backgroundColor: themeColors.backgroundColor2 },
+					]}
 					onPress={() => changeDate(-1)}
 				>
 					<Text style={styles.navButtonText}>Назад</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
-					style={[styles.navButton, { backgroundColor: themeColors.backgroundColor2 }]}
+					style={[
+						styles.navButton,
+						{ backgroundColor: themeColors.backgroundColor2 },
+					]}
 					onPress={() => changeDate(1)}
 				>
 					<Text style={styles.navButtonText}>Вперед</Text>

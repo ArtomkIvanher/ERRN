@@ -7,19 +7,34 @@ import ThemeSettings from './components/ThemeSettings'
 const Settings = ({
 	autoSaveInterval,
 	handleAutoSaveIntervalChange,
-	theme,
+	theme, // Передаємо тему як пропс
 	onThemeChange,
+	themeColors, // Оброблені кольори для теми
+	accent, // Акцентний колір
 }) => {
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>Налаштування акаунту</Text>
+		<View
+			style={[
+				styles.container,
+				{ backgroundColor: themeColors.backgroundColor },
+			]}
+		>
+			<Text style={[styles.title, { color: themeColors.textColor }]}>
+				Налаштування акаунту
+			</Text>
 
 			<AutoSaveIntervalSettings
 				autoSaveInterval={autoSaveInterval}
 				onIntervalChange={handleAutoSaveIntervalChange}
+				themeColors={themeColors} 
+				accent={accent} 
 			/>
 
-			<ThemeSettings currentTheme={theme} onThemeChange={onThemeChange} />
+			<ThemeSettings
+				currentTheme={theme}
+				onThemeChange={onThemeChange}
+				themeColors={themeColors}
+			/>
 
 			<SignOutButton />
 		</View>
@@ -31,7 +46,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#f9f9f9',
 	},
 	title: {
 		fontSize: 18,

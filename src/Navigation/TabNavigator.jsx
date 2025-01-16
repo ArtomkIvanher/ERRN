@@ -18,8 +18,6 @@ export default function TabNavigator({ commonProps }) {
 			screenOptions={{
 				tabBarStyle: {
 					backgroundColor: themeColors.backgroundColorTabNavigator, // Фон панелі з теми
-					borderTopWidth: 1, // Ширина верхнього бордера
-					borderTopColor: '#ddd', // Колір верхнього бордера
 					paddingBottom: 15, // Відступ знизу
 					paddingTop: 5, // Відступ зверху
 					height: 70,
