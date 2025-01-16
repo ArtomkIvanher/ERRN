@@ -17,7 +17,7 @@ export default function TabNavigator({ commonProps }) {
 		<Tab.Navigator
 			screenOptions={{
 				tabBarStyle: {
-					backgroundColor: themeColors.backgroundColor, // Фон панелі з теми
+					backgroundColor: themeColors.backgroundColorTabNavigator, // Фон панелі з теми
 					borderTopWidth: 1, // Ширина верхнього бордера
 					borderTopColor: '#ddd', // Колір верхнього бордера
 					paddingBottom: 15, // Відступ знизу
@@ -27,10 +27,10 @@ export default function TabNavigator({ commonProps }) {
 				tabBarLabelStyle: {
 					fontSize: 12, // Розмір тексту
 					fontWeight: 'bold', // Жирність тексту
-					color: themeColors.textColor, // Колір тексту з теми
+					color: themeColors.textColor2, // Колір тексту з теми
 				},
 				tabBarActiveTintColor: accent, // Колір активної вкладки
-				tabBarInactiveTintColor: themeColors.textColor, // Колір неактивних вкладок
+				tabBarInactiveTintColor: themeColors.textColor2, // Колір неактивних вкладок
 			}}
 		>
 			<Tab.Screen

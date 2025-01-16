@@ -6,11 +6,19 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native'
+import themes from '../../config/themes'
 
 const screenWidth = Dimensions.get('window').width
 
-export default function Schedule({ schedule, lessonTimes }) {
+export default function Schedule({ schedule, lessonTimes, theme }) {
 	const [currentDate, setCurrentDate] = useState(new Date())
+
+	const [currentTheme, accentColor] = theme || ['light', 'blue']
+	const themeColors =
+		themes[currentTheme] || themes.light
+	const accent =
+		themes.accentColors[accentColor] ||
+		themes.accentColors.blue
 
 	const daysOfWeek = [
 		'Понеділок',
@@ -48,7 +56,6 @@ export default function Schedule({ schedule, lessonTimes }) {
 		return schedule.schedule[dayIndex]?.[`week${currentWeek}`] || []
 	}
 
-
 	const renderDay = date => {
 		const scheduleForDay = getDaySchedule(date)
 		return (
@@ -58,23 +65,45 @@ export default function Schedule({ schedule, lessonTimes }) {
 						const subject = subjects.find(s => s.id === subjectId)
 						const timeInfo = lessonTimes?.[index] || {}
 						return (
-							<View key={index} style={styles.subjectContainer}>
-								<Text style={styles.subjectName}>
+							<View
+								key={index}
+								style={[
+									styles.subjectContainer,
+									{ backgroundColor: accent },
+								]}
+							>
+								<Text
+									style={[styles.subjectName, { color: themeColors.textColorScheduleCard }]}
+								>
 									Пара {index + 1}: {subject?.name || '—'}
 								</Text>
 								{timeInfo.start && timeInfo.end && (
-									<Text style={styles.lessonTime}>
+									<Text
+										style={[
+											styles.lessonTime,
+											{ color: themeColors.textColor2 },
+										]}
+									>
 										{timeInfo.start} - {timeInfo.end}
 									</Text>
 								)}
-								<Text style={styles.subjectDetails}>
+								<Text
+									style={[
+										styles.subjectDetails,
+										{ color: themeColors.textColor2 },
+									]}
+								>
 									Викладач: {subject?.teacher || '—'}
 								</Text>
 							</View>
 						)
 					})
 				) : (
-					<Text style={styles.noDataText}>Немає даних</Text>
+					<Text
+						style={[styles.noDataText, { color: themeColors.textColor2 }]}
+					>
+						Немає даних
+					</Text>
 				)}
 			</View>
 		)
@@ -89,24 +118,29 @@ export default function Schedule({ schedule, lessonTimes }) {
 	const isToday = currentDate.toDateString() === new Date().toDateString()
 
 	return (
-		<View style={styles.container}>
+		<View
+			style={[
+				styles.container,
+				{ backgroundColor: themeColors.backgroundColor },
+			]}
+		>
 			<View style={styles.headerContainer}>
-				<Text style={styles.dayOfWeekText}>
+				<Text style={[styles.dayOfWeekText, { color: themeColors.textColor }]}>
 					{daysOfWeek[getDayIndex(currentDate)]}
 				</Text>
-				<Text style={styles.dateText}>
+				<Text style={[styles.dateText, { color: themeColors.textColor }]}>
 					{currentDate.toLocaleDateString('uk-UA')}
 				</Text>
 			</View>
 			<View style={styles.navigationContainer}>
 				<TouchableOpacity
-					style={styles.navButton}
+					style={[styles.navButton, { backgroundColor: themeColors.backgroundColor2 }]}
 					onPress={() => changeDate(-1)}
 				>
 					<Text style={styles.navButtonText}>Назад</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
-					style={styles.navButton}
+					style={[styles.navButton, { backgroundColor: themeColors.backgroundColor2 }]}
 					onPress={() => changeDate(1)}
 				>
 					<Text style={styles.navButtonText}>Вперед</Text>
@@ -115,10 +149,10 @@ export default function Schedule({ schedule, lessonTimes }) {
 			{renderDay(currentDate)}
 			{!isToday && (
 				<TouchableOpacity
-					style={styles.todayButton}
+					style={[styles.todayButton, { backgroundColor: accent }]}
 					onPress={() => setCurrentDate(new Date())}
 				>
-					<Text style={styles.todayButtonText}>На сьогодні</Text>
+					<Text style={styles.textColorScheduleCard}>На сьогодні</Text>
 				</TouchableOpacity>
 			)}
 		</View>
@@ -126,7 +160,7 @@ export default function Schedule({ schedule, lessonTimes }) {
 }
 
 const styles = StyleSheet.create({
-	container: { flex: 1, padding: 20, backgroundColor: '#f9f9f9' },
+	container: { flex: 1, padding: 20 },
 	headerContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
@@ -134,7 +168,7 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	dayOfWeekText: { fontSize: 20, fontWeight: 'bold' },
-	dateText: { fontSize: 16, color: '#555' },
+	dateText: { fontSize: 16 },
 	navigationContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
@@ -142,29 +176,25 @@ const styles = StyleSheet.create({
 	},
 	navButton: {
 		padding: 10,
-		backgroundColor: '#007bff',
 		borderRadius: 5,
 	},
 	navButtonText: { color: '#fff', fontSize: 16 },
 	dayContainer: { flex: 1 },
-	dayHeader: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
 	subjectContainer: {
 		padding: 10,
-		backgroundColor: '#eaf4fc',
 		borderRadius: 5,
 		marginBottom: 10,
 	},
 	subjectName: { fontSize: 16, fontWeight: 'bold' },
-	lessonTime: { fontSize: 14, color: '#333' },
-	subjectDetails: { fontSize: 14, color: '#555' },
-	noDataText: { fontSize: 14, color: '#777' },
+	lessonTime: { fontSize: 14 },
+	subjectDetails: { fontSize: 14 },
+	noDataText: { fontSize: 14 },
 	todayButton: {
 		position: 'absolute',
 		bottom: 20,
 		left: 20,
 		right: 20,
 		padding: 15,
-		backgroundColor: '#28a745',
 		borderRadius: 5,
 		alignItems: 'center',
 	},
