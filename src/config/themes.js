@@ -1,7 +1,7 @@
 const themes = {
 	light: {
-		backgroundColor: '#f2f2f3',
-		backgroundColor2: 'fff',
+		backgroundColor: '#fff',
+		backgroundColor2: '#e1e1e1',
 		backgroundColor3: '#0a0a0a',
 		
 		textColor: '#000',

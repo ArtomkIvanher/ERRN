@@ -8,7 +8,13 @@ import {
 	View,
 } from 'react-native'
 
-export default function ScheduleManager({ schedule, setSchedule, subjects }) {
+export default function ScheduleManager({
+	schedule,
+	setSchedule,
+	subjects,
+	themeColors,
+	accent,
+}) {
 	const [initialized, setInitialized] = useState(false)
 	const [showRepeatMenu, setShowRepeatMenu] = useState(false)
 	const [selectedSubject, setSelectedSubject] = useState(null)
@@ -106,7 +112,9 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 	return (
 		<View style={styles.container}>
 			<View style={styles.repeatContainer}>
-				<Text style={styles.repeatLabel}>Кількість тижнів повторення:</Text>
+				<Text style={[styles.repeatLabel, { color: themeColors.textColor }]}>
+					Кількість тижнів повторення:
+				</Text>
 				<View style={styles.repeatButtons}>
 					{[1, 2, 3, 4].map(value => (
 						<TouchableOpacity
@@ -114,7 +122,9 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 							onPress={() => handleSelectRepeatOption(value)}
 							style={[
 								styles.weekButton,
-								schedule.repeat === value && styles.weekButtonActive,
+								schedule.repeat === value && {
+									backgroundColor: accent, // Використовуємо accent для фону
+								},
 							]}
 						>
 							<Text
@@ -132,7 +142,9 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 
 			{schedule.schedule.map((day, dayIndex) => (
 				<View key={dayIndex} style={styles.dayContainer}>
-					<Text style={styles.dayTitle}>{daysOfWeek[dayIndex]}</Text>
+					<Text style={[styles.dayTitle, { color: themeColors.textColor }]}>
+						{daysOfWeek[dayIndex]}
+					</Text>
 					{Object.keys(day)
 						.sort(
 							(a, b) =>
@@ -142,7 +154,14 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 						.slice(0, schedule.repeat)
 						.map(weekPart => (
 							<View key={weekPart} style={styles.weekPartContainer}>
-								<Text style={styles.weekPartTitle}>{weekPart}</Text>
+								<Text
+									style={[
+										styles.weekPartTitle,
+										{ color: themeColors.textColor },
+									]}
+								>
+									{weekPart}
+								</Text>
 
 								{day[weekPart].map((subjectId, subjectIndex) => (
 									<View key={subjectIndex} style={styles.subjectContainer}>
@@ -169,10 +188,17 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 									</View>
 								))}
 								<TouchableOpacity
-									style={styles.addSubjectButton}
+									style={[styles.addSubjectButton, { backgroundColor: accent }]}
 									onPress={() => handleAddDefaultSubject(dayIndex, weekPart)}
 								>
-									<Text style={styles.addSubjectButtonText}>Додати пару</Text>
+									<Text
+										style={[
+											styles.addSubjectButtonText,
+											{ color: themeColors.textColor },
+										]}
+									>
+										Додати пару
+									</Text>
 								</TouchableOpacity>
 							</View>
 						))}
@@ -186,8 +212,17 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 					visible={showSubjectModal}
 				>
 					<View style={styles.modalContainer}>
-						<View style={styles.modalContent}>
-							<Text style={styles.modalTitle}>Виберіть предмет</Text>
+						<View
+							style={[
+								styles.modalContent,
+								{ backgroundColor: themeColors.backgroundColor2 },
+							]}
+						>
+							<Text
+								style={[styles.modalTitle, { color: themeColors.textColor }]}
+							>
+								Виберіть предмет
+							</Text>
 							<FlatList
 								data={subjects}
 								keyExtractor={item => item.id.toString()}
@@ -196,7 +231,14 @@ export default function ScheduleManager({ schedule, setSchedule, subjects }) {
 										style={styles.subjectOption}
 										onPress={() => handleSelectSubject(item.id)}
 									>
-										<Text style={styles.subjectOptionText}>{item.name}</Text>
+										<Text
+											style={[
+												styles.subjectOptionText,
+												{ color: themeColors.textColor },
+											]}
+										>
+											{item.name}
+										</Text>
 									</TouchableOpacity>
 								)}
 							/>
@@ -367,23 +409,23 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		marginTop: 10,
-	  },
-	  weekButton: {
+	},
+	weekButton: {
 		flex: 1,
 		marginHorizontal: 5,
 		paddingVertical: 10,
 		borderRadius: 5,
 		backgroundColor: '#f0f0f0',
 		alignItems: 'center',
-	  },
-	  weekButtonActive: {
+	},
+	weekButtonActive: {
 		backgroundColor: '#4CAF50',
-	  },
-	  weekButtonText: {
+	},
+	weekButtonText: {
 		fontSize: 16,
 		color: '#000',
-	  },
-	  weekButtonTextActive: {
+	},
+	weekButtonTextActive: {
 		color: '#fff',
-	  },
+	},
 })

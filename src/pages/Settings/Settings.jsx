@@ -34,6 +34,7 @@ const Settings = ({
 				currentTheme={theme}
 				onThemeChange={onThemeChange}
 				themeColors={themeColors}
+				accent={accent} 
 			/>
 
 			<SignOutButton />

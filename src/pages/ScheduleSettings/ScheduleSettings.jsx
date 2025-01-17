@@ -28,6 +28,8 @@ export default function ScheduleSettings({
 	onRefresh,
 	onDataChange,
 	setSchedule,
+	themeColors,
+	accent,
 }) {
 	const [showPicker, setShowPicker] = useState(false) // Контролює видимість календаря
 	const [selectedDate, setSelectedDate] = useState(new Date()) // Обрана дата
@@ -87,8 +89,13 @@ export default function ScheduleSettings({
 		<FlatList
 			data={[{}]}
 			renderItem={() => (
-				<View style={styles.container}>
-					<Text style={styles.title}>
+				<View
+					style={[
+						styles.container,
+						{ backgroundColor: themeColors.backgroundColor },
+					]}
+				>
+					<Text style={[styles.title, { color: themeColors.textColor }]}>
 						Розклад користувача: {authUser.email}
 					</Text>
 
@@ -99,6 +106,8 @@ export default function ScheduleSettings({
 							setSchedule(updatedSchedule)
 							onDataChange(updatedSchedule)
 						}}
+						themeColors={themeColors}
+						accent={accent}
 					/>
 
 					<TeachersManager
@@ -120,6 +129,8 @@ export default function ScheduleSettings({
 							setSchedule(updatedSchedule)
 							onDataChange(updatedSchedule) // Передаємо оновлений розклад
 						}}
+						themeColors={themeColors}
+						accent={accent}
 					/>
 
 					<SubjectsManager
@@ -142,6 +153,8 @@ export default function ScheduleSettings({
 							onDataChange(updatedSchedule) // Передаємо оновлений розклад
 						}}
 						teachers={schedule.teachers} // Передаємо список учителів у SubjectsManager
+						themeColors={themeColors}
+						accent={accent}
 					/>
 
 					<ScheduleManager
@@ -151,6 +164,8 @@ export default function ScheduleSettings({
 							onDataChange(updatedSchedule) // Передаємо оновлений розклад
 						}}
 						subjects={schedule.subjects}
+						themeColors={themeColors}
+						accent={accent}
 					/>
 
 					{/* Кнопка для відкриття календаря */}
@@ -167,7 +182,10 @@ export default function ScheduleSettings({
 								style={
 									Platform.OS === 'web'
 										? styles.webPicker
-										: styles.pickerContainer
+										: [
+												styles.pickerContainer,
+												{ backgroundColor: themeColors.backgroundColor2 },
+										  ]
 								}
 							>
 								{Platform.OS === 'web' ? (

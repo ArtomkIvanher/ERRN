@@ -15,6 +15,8 @@ export default function SubjectsManager({
 	setSubjects,
 	onAddSubject,
 	teachers,
+	themeColors,
+	accent,
 }) {
 	const [newSubject, setNewSubject] = useState({
 		name: '',
@@ -83,29 +85,49 @@ export default function SubjectsManager({
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.header}>Manage Subjects</Text>
+			<Text style={[styles.header, { color: themeColors.textColor }]}>
+				Manage Subjects
+			</Text>
 			<TextInput
-				style={styles.input}
+				style={[
+					styles.input,
+					{
+						borderColor: themeColors.textColor2,
+						color: themeColors.textColor,
+					},
+				]}
 				placeholder='Subject Name'
 				value={newSubject.name}
 				onChangeText={text => setNewSubject({ ...newSubject, name: text })}
 			/>
 
-			<TouchableOpacity style={styles.input} onPress={toggleModal}>
-				<Text style={styles.teacherText}>
+			<TouchableOpacity
+				style={[styles.input, { borderColor: themeColors.textColor2 }]}
+				onPress={toggleModal}
+			>
+				<Text style={[styles.teacherText, { color: themeColors.textColor }]}>
 					{selectedTeacher ? selectedTeacher : 'Select Teacher'}
 				</Text>
 			</TouchableOpacity>
 
 			<TextInput
-				style={styles.input}
+				style={[
+					styles.input,
+					{
+						borderColor: themeColors.textColor2,
+						color: themeColors.textColor,
+					},
+				]}
 				placeholder='Zoom Link'
 				value={newSubject.zoom_link}
 				onChangeText={text => setNewSubject({ ...newSubject, zoom_link: text })}
 			/>
 
-			<TouchableOpacity style={styles.addButton} onPress={handleAddSubject}>
-				<Text style={styles.addButtonText}>
+			<TouchableOpacity
+				style={[styles.addButton, { backgroundColor: accent }]}
+				onPress={handleAddSubject}
+			>
+				<Text style={[styles.addButtonText, { color: themeColors.textColor }]}>
 					{isEditMode ? 'Save Changes' : 'Add Subject'}
 				</Text>
 			</TouchableOpacity>
@@ -117,25 +139,51 @@ export default function SubjectsManager({
 				onRequestClose={toggleModal}
 			>
 				<View style={styles.modalOverlay}>
-					<View style={styles.modalContent}>
-						<Text style={styles.modalHeader}>Select Teacher</Text>
+					<View
+						style={[
+							styles.modalContent,
+							{ backgroundColor: themeColors.backgroundColor2 },
+						]}
+					>
+						<Text
+							style={[styles.modalHeader, { color: themeColors.textColor }]}
+						>
+							Select Teacher
+						</Text>
 						<FlatList
 							data={teachers}
 							keyExtractor={item => item.id.toString()}
 							renderItem={({ item }) => (
 								<Pressable
-									style={styles.teacherItem}
+									style={[
+										styles.teacherItem,
+										{ backgroundColor: themeColors.backgroundColor3 },
+									]}
 									onPress={() => handleTeacherSelect(item.id)}
 								>
-									<Text style={styles.teacherText}>{item.name}</Text>
+									<Text
+										style={[
+											styles.teacherText,
+											{ color: themeColors.textColor },
+										]}
+									>
+										{item.name}
+									</Text>
 								</Pressable>
 							)}
 						/>
 						<TouchableOpacity
-							style={styles.closeModalButton}
+							style={[styles.closeModalButton, { backgroundColor: accent }]}
 							onPress={toggleModal}
 						>
-							<Text style={styles.closeModalButtonText}>Close</Text>
+							<Text
+								style={[
+									styles.closeModalButtonText,
+									{ color: themeColors.textColor },
+								]}
+							>
+								Close
+							</Text>
 						</TouchableOpacity>
 					</View>
 				</View>
@@ -145,16 +193,30 @@ export default function SubjectsManager({
 				data={subjects}
 				keyExtractor={item => item.id.toString()}
 				renderItem={({ item }) => (
-					<View style={styles.subjectItem}>
-						<Text style={styles.subjectText}>
+					<View
+						style={[
+							styles.subjectItem,
+							{ backgroundColor: themeColors.backgroundColor2 },
+						]}
+					>
+						<Text
+							style={[styles.subjectText, { color: themeColors.textColor }]}
+						>
 							{item.name} - {getTeacherName(item.teacher)}
 						</Text>
 						<View style={styles.actionButtons}>
 							<TouchableOpacity
 								onPress={() => handleEditSubject(item)}
-								style={styles.editButton}
+								style={[styles.editButton, { backgroundColor: accent }]}
 							>
-								<Text style={styles.actionButtonText}>Edit</Text>
+								<Text
+									style={[
+										styles.actionButtonText,
+										{ color: themeColors.textColor },
+									]}
+								>
+									Edit
+								</Text>
 							</TouchableOpacity>
 							<TouchableOpacity
 								onPress={() => handleRemoveSubject(item.id)}
@@ -203,7 +265,6 @@ const styles = StyleSheet.create({
 	subjectItem: {
 		marginBottom: 10,
 		padding: 10,
-		borderWidth: 1,
 		borderRadius: 5,
 		backgroundColor: '#f9f9f9',
 	},

@@ -2,13 +2,20 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import themes from '../../../config/themes'
 
-const ThemeSettings = ({ currentTheme, onThemeChange }) => {
+const ThemeSettings = ({
+	currentTheme,
+	onThemeChange,
+	themeColors,
+	accent,
+}) => {
 	const [selectedMode, setSelectedMode] = useState(currentTheme[0])
 	const [selectedColor, setSelectedColor] = useState(currentTheme[1])
 
 	// Оновлюємо тему при кожній зміні вибору
 	useEffect(() => {
-		onThemeChange([selectedMode, selectedColor])
+		if (currentTheme[0] !== selectedMode || currentTheme[1] !== selectedColor) {
+			onThemeChange([selectedMode, selectedColor])
+		}
 	}, [selectedMode, selectedColor])
 
 	const renderColorOption = colorName => {
@@ -20,7 +27,10 @@ const ThemeSettings = ({ currentTheme, onThemeChange }) => {
 				style={[
 					styles.colorOption,
 					{ backgroundColor: colorValue },
-					selectedColor === colorName && styles.selectedColor,
+					selectedColor === colorName && {
+						...styles.selectedColor,
+						borderColor: themeColors.textColor2,
+					},
 				]}
 				onPress={() => setSelectedColor(colorName)}
 			/>
@@ -29,29 +39,51 @@ const ThemeSettings = ({ currentTheme, onThemeChange }) => {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Виберіть тему</Text>
+			<Text style={[styles.title, { color: themeColors.textColor }]}>
+				Виберіть тему
+			</Text>
 			<View style={styles.themeContainer}>
 				<TouchableOpacity
 					style={[
 						styles.themeButton,
-						selectedMode === 'dark' && styles.selectedTheme,
+						{ borderColor: themeColors.textColor },
+						selectedMode === 'dark' && {
+							...styles.selectedTheme,
+							borderColor: themeColors.textColor2,
+							backgroundColor: accent 
+						},
 					]}
 					onPress={() => setSelectedMode('dark')}
 				>
-					<Text style={styles.themeButtonText}>Темна</Text>
+					<Text
+						style={[styles.themeButtonText, { color: themeColors.textColor }]}
+					>
+						Темна
+					</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
 					style={[
 						styles.themeButton,
-						selectedMode === 'light' && styles.selectedTheme,
+						{ borderColor: themeColors.textColor},
+						selectedMode === 'light' && {
+							...styles.selectedTheme,
+							borderColor: themeColors.textColor2,
+							backgroundColor: accent 
+						},
 					]}
 					onPress={() => setSelectedMode('light')}
 				>
-					<Text style={styles.themeButtonText}>Світла</Text>
+					<Text
+						style={[styles.themeButtonText, { color: themeColors.textColor }]}
+					>
+						Світла
+					</Text>
 				</TouchableOpacity>
 			</View>
 
-			<Text style={styles.title}>Виберіть колір</Text>
+			<Text style={[styles.title, { color: themeColors.textColor }]}>
+				Виберіть колір
+			</Text>
 			<View style={styles.colorsContainer}>
 				{Object.keys(themes.accentColors).map(colorName =>
 					renderColorOption(colorName)
@@ -80,16 +112,15 @@ const styles = StyleSheet.create({
 		padding: 10,
 		alignItems: 'center',
 		borderWidth: 1,
-		borderColor: '#ccc',
-		marginRight: 10,
 		borderRadius: 5,
+		marginRight: 10,
 	},
 	themeButtonText: {
 		fontSize: 14,
 		fontWeight: 'bold',
 	},
 	selectedTheme: {
-		borderColor: '#007AFF',
+		borderWidth: 2,
 	},
 	colorsContainer: {
 		flexDirection: 'row',
@@ -105,7 +136,6 @@ const styles = StyleSheet.create({
 	},
 	selectedColor: {
 		borderWidth: 3,
-		borderColor: '#007AFF',
 	},
 })
 

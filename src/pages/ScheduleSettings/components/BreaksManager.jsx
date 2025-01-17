@@ -8,7 +8,12 @@ import {
 	View,
 } from 'react-native'
 
-export default function BreaksManager({ breaks, setBreaks }) {
+export default function BreaksManager({
+	breaks,
+	setBreaks,
+	themeColors,
+	accent,
+}) {
 	const [tempBreaks, setTempBreaks] = useState([...breaks])
 	const [isChanged, setIsChanged] = useState(false)
 
@@ -39,14 +44,30 @@ export default function BreaksManager({ breaks, setBreaks }) {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Редагувати перерви:</Text>
+			<Text style={[styles.title, { color: themeColors.textColor }]}>
+				Редагувати перерви:
+			</Text>
 			<FlatList
 				data={tempBreaks}
 				renderItem={({ item, index }) => (
-					<View style={styles.breakContainer}>
-						<Text style={styles.breakLabel}>Перерва: {index + 1}</Text>
+					<View
+						style={[
+							styles.breakContainer,
+							{ backgroundColor: themeColors.backgroundColor2 },
+						]}
+					>
+						<Text style={[styles.breakLabel, { color: themeColors.textColor }]}>
+							{' '}
+							Перерва: {index + 1}
+						</Text>
 						<TextInput
-							style={styles.input}
+							style={[
+								styles.input,
+								{
+									borderColor: themeColors.textColor2,
+									color: themeColors.textColor,
+								},
+							]}
 							keyboardType='number-pad'
 							value={String(item)}
 							onChangeText={value => handleBreakChange(value, index)}
@@ -55,21 +76,34 @@ export default function BreaksManager({ breaks, setBreaks }) {
 							style={styles.removeButton}
 							onPress={() => handleRemoveBreak(index)}
 						>
-							<Text style={styles.removeButtonText}>Видалити</Text>
+							<Text style={{ color: themeColors.textColor }}>Видалити</Text>
 						</TouchableOpacity>
 					</View>
 				)}
 				keyExtractor={(item, index) => index.toString()}
 			/>
-			<TouchableOpacity style={styles.addButton} onPress={handleAddBreak}>
-				<Text style={styles.addButtonText}>Додати перерву</Text>
+			<TouchableOpacity
+				style={[styles.addButton, { backgroundColor: accent }]}
+				onPress={handleAddBreak}
+			>
+				<Text style={{ color: themeColors.textColor }}>Додати перерву</Text>
 			</TouchableOpacity>
 			<TouchableOpacity
-				style={[styles.confirmButton, !isChanged && styles.disabledButton]}
+				style={[
+					styles.confirmButton,
+					{
+						backgroundColor: isChanged ? accent : themeColors.backgroundColor2,
+					},
+					!isChanged && styles.disabledButton,
+				]}
 				onPress={handleConfirm}
 				disabled={!isChanged}
 			>
-				<Text style={styles.confirmButtonText}>Підтвердити</Text>
+				<Text
+					style={[styles.confirmButtonText, { color: themeColors.textColor }]}
+				>
+					Підтвердити
+				</Text>
 			</TouchableOpacity>
 		</View>
 	)
@@ -78,14 +112,7 @@ export default function BreaksManager({ breaks, setBreaks }) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#f9f9f9',
 		padding: 20,
-		borderRadius: 10,
-		shadowColor: '#000',
-		shadowOpacity: 0.1,
-		shadowRadius: 4,
-		shadowOffset: { width: 0, height: 2 },
-		elevation: 3,
 	},
 	title: {
 		fontSize: 20,
