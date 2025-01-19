@@ -19,6 +19,8 @@ export default function ScheduleManager({
 	const [showRepeatMenu, setShowRepeatMenu] = useState(false)
 	const [selectedSubject, setSelectedSubject] = useState(null)
 	const [showSubjectModal, setShowSubjectModal] = useState(false)
+	const [showColorModal, setShowColorModal] = useState(false)
+	const [selectedColorSubject, setSelectedColorSubject] = useState(null)
 
 	const daysOfWeek = [
 		'Понеділок',
@@ -122,6 +124,9 @@ export default function ScheduleManager({
 							onPress={() => handleSelectRepeatOption(value)}
 							style={[
 								styles.weekButton,
+								{
+									backgroundColor: themeColors.backgroundColor2,
+								},
 								schedule.repeat === value && {
 									backgroundColor: accent, // Використовуємо accent для фону
 								},
@@ -130,7 +135,9 @@ export default function ScheduleManager({
 							<Text
 								style={[
 									styles.weekButtonText,
-									schedule.repeat === value && styles.weekButtonTextActive,
+									{
+										color: themeColors.textColor,
+									},
 								]}
 							>
 								{value}

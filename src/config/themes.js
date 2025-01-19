@@ -3,25 +3,25 @@ const themes = {
 		backgroundColor: '#fff',
 		backgroundColor2: '#e1e1e1',
 		backgroundColor3: '#0a0a0a',
+
+		backgroundColorTabNavigator: '#fff',
 		
 		textColor: '#000',
 		textColor2: '#7a7a80',
 		textColor3: '#7a7a80',
 
-		backgroundColorTabNavigator: '#fff',
-
 		textColorScheduleCard: '#000',
 	},
 	dark: {
 		backgroundColor: '#252527',
-		backgroundColor2: '#1c1c1c',
-		backgroundColor3: '#0a0a0a',
+		backgroundColor2: '#373737',
+		backgroundColor3: '#000',
+
+		backgroundColorTabNavigator: '#252527f0',
 
 		textColor: '#fff',
 		textColor2: '#7a7a80',
 		textColor3: '#7a7a80',
-
-		backgroundColorTabNavigator: '#252527',
 
 		textColorScheduleCard: '#252527',
 	},

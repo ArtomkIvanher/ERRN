@@ -64,8 +64,8 @@ export default function BreaksManager({
 							style={[
 								styles.input,
 								{
-									borderColor: themeColors.textColor2,
 									color: themeColors.textColor,
+									backgroundColor: themeColors.backgroundColor,
 								},
 							]}
 							keyboardType='number-pad'
@@ -94,7 +94,6 @@ export default function BreaksManager({
 					{
 						backgroundColor: isChanged ? accent : themeColors.backgroundColor2,
 					},
-					!isChanged && styles.disabledButton,
 				]}
 				onPress={handleConfirm}
 				disabled={!isChanged}
@@ -141,8 +140,6 @@ const styles = StyleSheet.create({
 		marginRight: 10,
 	},
 	input: {
-		borderWidth: 1,
-		borderColor: '#ccc',
 		borderRadius: 5,
 		padding: 10,
 		marginRight: 10,

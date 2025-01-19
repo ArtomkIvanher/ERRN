@@ -166,7 +166,7 @@ export default function MainLayout() {
 	}
 
 	return (
-		<View style={{ flex: 1 }}>
+		<View style={[{ flex: 1, paddingTop: 40, backgroundColor: themeColors.backgroundColor}]}>
 			<View style={styles.container}>
 				{/* Кнопка "Зберегти зараз" */}
 				{isUnsavedChanges && (
@@ -195,13 +195,10 @@ const styles = StyleSheet.create({
 	inputContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginBottom: 20,
 		paddingHorizontal: 10,
 	},
 	input: {
 		flex: 1,
-		borderColor: '#ccc',
-		borderWidth: 1,
 		padding: 10,
 		marginRight: 10,
 	},

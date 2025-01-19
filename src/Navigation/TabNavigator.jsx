@@ -18,9 +18,12 @@ export default function TabNavigator({ commonProps }) {
 			screenOptions={{
 				tabBarStyle: {
 					backgroundColor: themeColors.backgroundColorTabNavigator, // Фон панелі з теми
-					paddingBottom: 15, // Відступ знизу
-					paddingTop: 5, // Відступ зверху
+					paddingBottom: 10, // Відступ знизу
+					paddingTop: 0, // Відступ зверху
 					height: 70,
+					borderWidth: 0,
+					borderColor: '#00000000',
+					position: 'absolute',
 				},
 				tabBarLabelStyle: {
 					fontSize: 12, // Розмір тексту

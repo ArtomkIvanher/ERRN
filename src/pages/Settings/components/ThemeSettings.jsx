@@ -46,11 +46,12 @@ const ThemeSettings = ({
 				<TouchableOpacity
 					style={[
 						styles.themeButton,
-						{ borderColor: themeColors.textColor },
+						{
+							backgroundColor: themeColors.backgroundColor2,
+						},
 						selectedMode === 'dark' && {
 							...styles.selectedTheme,
-							borderColor: themeColors.textColor2,
-							backgroundColor: accent 
+							backgroundColor: accent,
 						},
 					]}
 					onPress={() => setSelectedMode('dark')}
@@ -64,11 +65,12 @@ const ThemeSettings = ({
 				<TouchableOpacity
 					style={[
 						styles.themeButton,
-						{ borderColor: themeColors.textColor},
+						{
+							backgroundColor: themeColors.backgroundColor2,
+						},
 						selectedMode === 'light' && {
 							...styles.selectedTheme,
-							borderColor: themeColors.textColor2,
-							backgroundColor: accent 
+							backgroundColor: accent,
 						},
 					]}
 					onPress={() => setSelectedMode('light')}
@@ -111,16 +113,12 @@ const styles = StyleSheet.create({
 		flex: 1,
 		padding: 10,
 		alignItems: 'center',
-		borderWidth: 1,
 		borderRadius: 5,
 		marginRight: 10,
 	},
 	themeButtonText: {
 		fontSize: 14,
 		fontWeight: 'bold',
-	},
-	selectedTheme: {
-		borderWidth: 2,
 	},
 	colorsContainer: {
 		flexDirection: 'row',

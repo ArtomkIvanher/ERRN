@@ -55,8 +55,8 @@ export default function TeachersManager({
 				style={[
 					styles.input,
 					{
-						borderColor: themeColors.textColor2,
 						color: themeColors.textColor,
+						backgroundColor: themeColors.backgroundColor2
 					},
 				]}
 				placeholder='Teacher Name'
@@ -67,8 +67,8 @@ export default function TeachersManager({
 				style={[
 					styles.input,
 					{
-						borderColor: themeColors.textColor2,
 						color: themeColors.textColor,
+						backgroundColor: themeColors.backgroundColor2
 					},
 				]}
 				placeholder='Phone'
@@ -149,7 +149,6 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	input: {
-		borderWidth: 1,
 		padding: 10,
 		marginBottom: 15,
 		borderRadius: 5,
@@ -168,7 +167,6 @@ const styles = StyleSheet.create({
 	teacherItem: {
 		marginBottom: 10,
 		padding: 10,
-		borderWidth: 1,
 		borderRadius: 5,
 		backgroundColor: '#f9f9f9',
 	},

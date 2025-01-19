@@ -92,8 +92,8 @@ export default function SubjectsManager({
 				style={[
 					styles.input,
 					{
-						borderColor: themeColors.textColor2,
 						color: themeColors.textColor,
+						backgroundColor: themeColors.backgroundColor2,
 					},
 				]}
 				placeholder='Subject Name'
@@ -102,7 +102,13 @@ export default function SubjectsManager({
 			/>
 
 			<TouchableOpacity
-				style={[styles.input, { borderColor: themeColors.textColor2 }]}
+				style={[
+					styles.input,
+					{
+						borderColor: themeColors.textColor2,
+						backgroundColor: themeColors.backgroundColor2,
+					},
+				]}
 				onPress={toggleModal}
 			>
 				<Text style={[styles.teacherText, { color: themeColors.textColor }]}>
@@ -114,8 +120,8 @@ export default function SubjectsManager({
 				style={[
 					styles.input,
 					{
-						borderColor: themeColors.textColor2,
 						color: themeColors.textColor,
+						backgroundColor: themeColors.backgroundColor2,
 					},
 				]}
 				placeholder='Zoom Link'
@@ -242,7 +248,6 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	input: {
-		borderWidth: 1,
 		padding: 10,
 		marginBottom: 15,
 		borderRadius: 5,
