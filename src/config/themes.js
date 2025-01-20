@@ -27,7 +27,7 @@ const themes = {
 	},
 	accentColors: {
 		red: '#fdabab',
-		blue: '#95F1FA',
+		blue: '#00457E',
 		green: '#C6F8BD',
 		yellow: '#F7FAB2',
 		orange: '#FFD7A6',

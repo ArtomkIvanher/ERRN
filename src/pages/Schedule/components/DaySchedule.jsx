@@ -1,12 +1,12 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import themes from '../../../config/themes' 
 
 export default function DaySchedule({
 	date,
 	getDaySchedule,
 	subjects,
 	lessonTimes,
-	accent,
 	themeColors,
 	teachers,
 }) {
@@ -22,11 +22,17 @@ export default function DaySchedule({
 					const teacher = teachers.find(t => t.id === subject?.teacher)
 					// Отримати інформацію про час
 					const timeInfo = lessonTimes?.[index] || {}
+					// Отримати колір з themes.accentColors
+					const subjectColor =
+						themes.accentColors[subject?.color] || themes.accentColors.grey
 
 					return (
 						<View
 							key={index}
-							style={[styles.subjectContainer, { backgroundColor: accent }]}
+							style={[
+								styles.subjectContainer,
+								{ backgroundColor: subjectColor },
+							]}
 						>
 							<Text
 								style={[styles.subjectName, { color: themeColors.textColor }]}

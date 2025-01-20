@@ -9,6 +9,7 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native'
+import themes from '../../../config/themes'
 
 export default function SubjectsManager({
 	subjects,
@@ -22,6 +23,7 @@ export default function SubjectsManager({
 		name: '',
 		teacher: '',
 		zoom_link: '',
+		color: 'red',
 	})
 
 	const [isModalVisible, setIsModalVisible] = useState(false)
@@ -33,6 +35,10 @@ export default function SubjectsManager({
 	const getTeacherName = teacherId => {
 		const teacher = teachers.find(t => t.id === teacherId)
 		return teacher ? teacher.name : 'Unknown Teacher'
+	}
+
+	const handleColorSelect = color => {
+		setNewSubject({ ...newSubject, color })
 	}
 
 	const handleAddSubject = () => {
@@ -53,7 +59,7 @@ export default function SubjectsManager({
 			// Додавання нового предмета
 			onAddSubject(newSubject)
 		}
-		setNewSubject({ name: '', teacher: '', zoom_link: '' })
+		setNewSubject({ name: '', teacher: '', zoom_link: '', color: 'red' })
 	}
 
 	const handleEditSubject = subject => {
@@ -128,6 +134,22 @@ export default function SubjectsManager({
 				value={newSubject.zoom_link}
 				onChangeText={text => setNewSubject({ ...newSubject, zoom_link: text })}
 			/>
+
+			<View style={styles.colorSelector}>
+				{Object.entries(themes.accentColors).map(([colorName, colorValue]) => (
+					<TouchableOpacity
+						key={colorName}
+						style={[
+							styles.colorCircle,
+							{
+								backgroundColor: colorValue,
+								borderWidth: newSubject.color === colorName ? 2 : 0,
+							},
+						]}
+						onPress={() => handleColorSelect(colorName)}
+					/>
+				))}
+			</View>
 
 			<TouchableOpacity
 				style={[styles.addButton, { backgroundColor: accent }]}
@@ -326,5 +348,16 @@ const styles = StyleSheet.create({
 	},
 	closeModalButtonText: {
 		color: '#fff',
+	},
+	colorSelector: {
+		flexDirection: 'row',
+		marginBottom: 15,
+	},
+	colorCircle: {
+		width: 30,
+		height: 30,
+		borderRadius: 15,
+		marginRight: 10,
+		borderColor: '#000',
 	},
 })
