@@ -98,11 +98,6 @@ export default function ScheduleManager({
 		setSchedule(updatedSchedule)
 	}
 
-	const handleSelectRepeatOption = value => {
-		setSchedule({ ...schedule, repeat: value })
-		setShowRepeatMenu(false) // Закриваємо меню після вибору опції
-	}
-
 	if (!schedule || !schedule.schedule) {
 		return <Text>Loading schedule...</Text>
 	}
@@ -113,40 +108,6 @@ export default function ScheduleManager({
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.repeatContainer}>
-				<Text style={[styles.repeatLabel, { color: themeColors.textColor }]}>
-					Кількість тижнів повторення:
-				</Text>
-				<View style={styles.repeatButtons}>
-					{[1, 2, 3, 4].map(value => (
-						<TouchableOpacity
-							key={value}
-							onPress={() => handleSelectRepeatOption(value)}
-							style={[
-								styles.weekButton,
-								{
-									backgroundColor: themeColors.backgroundColor2,
-								},
-								schedule.repeat === value && {
-									backgroundColor: accent, // Використовуємо accent для фону
-								},
-							]}
-						>
-							<Text
-								style={[
-									styles.weekButtonText,
-									{
-										color: themeColors.textColor,
-									},
-								]}
-							>
-								{value}
-							</Text>
-						</TouchableOpacity>
-					))}
-				</View>
-			</View>
-
 			{schedule.schedule.map((day, dayIndex) => (
 				<View key={dayIndex} style={styles.dayContainer}>
 					<Text style={[styles.dayTitle, { color: themeColors.textColor }]}>

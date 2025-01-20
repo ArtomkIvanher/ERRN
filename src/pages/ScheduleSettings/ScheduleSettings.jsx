@@ -16,6 +16,9 @@ import SubjectsManager from './components/SubjectsManager'
 
 import TeachersManager from './components/TeachersManager'
 
+import WeekManager from './components/WeekManager';
+
+
 // Для веб-версії
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -23,7 +26,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 export default function ScheduleSettings({
 	schedule,
 	authUser,
-	autoSaveInterval,
+	autoSaveInterval,               
 	refreshing,
 	onRefresh,
 	onDataChange,
@@ -153,6 +156,16 @@ export default function ScheduleSettings({
 							onDataChange(updatedSchedule) // Передаємо оновлений розклад
 						}}
 						teachers={schedule.teachers} // Передаємо список учителів у SubjectsManager
+						themeColors={themeColors}
+						accent={accent}
+					/>
+					<WeekManager
+						schedule={schedule}
+						setSchedule={updatedSchedule => {
+							setSchedule(updatedSchedule)
+							onDataChange(updatedSchedule) // Передаємо оновлений розклад
+						}}
+						subjects={schedule.subjects}
 						themeColors={themeColors}
 						accent={accent}
 					/>
