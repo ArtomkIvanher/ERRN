@@ -20,14 +20,14 @@ export default function AutoSaveManager({
 		if (isUnsavedChanges) {
 			startAutoSave()
 			Animated.timing(heightAnim, {
-				toValue: 30, // Висота панелі
+				toValue: 30,
 				duration: 500,
 				easing: Easing.out(Easing.quad),
 				useNativeDriver: false,
 			}).start()
 		} else if (!showSavedMessage) {
 			Animated.timing(heightAnim, {
-				toValue: 0, // Сховати панель
+				toValue: 0.01, // 👈 уникаємо повного видалення елемента
 				duration: 500,
 				easing: Easing.in(Easing.quad),
 				useNativeDriver: false,
@@ -59,7 +59,6 @@ export default function AutoSaveManager({
 					if (onAutoSaveComplete) {
 						setTimeout(onAutoSaveComplete, 0)
 					}
-					// Показуємо повідомлення "Збережено" на 5 секунд
 					setShowSavedMessage(true)
 					setTimeout(() => {
 						setShowSavedMessage(false)
@@ -79,24 +78,16 @@ export default function AutoSaveManager({
 		}
 	}
 
+	const getDisplayText = () => {
+		if (isSaving) return 'Збереження...'
+		if (showSavedMessage) return 'Збережено'
+		if (isUnsavedChanges) return `Час до автозбереження: ${timeLeft} сек.`
+		return 'Всі зміни збережені.'
+	}
+
 	return (
-		<Animated.View
-			style={[
-				styles.container,
-				{
-					height: heightAnim, // Анімація висоти
-				},
-			]}
-		>
-			{isSaving ? (
-				<Text style={styles.text}>Збереження...</Text>
-			) : showSavedMessage ? (
-				<Text style={styles.text}>Збережено</Text>
-			) : isUnsavedChanges ? (
-				<Text style={styles.text}>Час до автозбереження: {timeLeft} сек.</Text>
-			) : (
-				<Text style={styles.text}>Всі зміни збережені.</Text>
-			)}
+		<Animated.View key="autosave-banner" style={[styles.container, { height: heightAnim }]}>
+			<Text style={styles.text}>{getDisplayText()}</Text>
 		</Animated.View>
 	)
 }
@@ -105,7 +96,7 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: '#ffcc00',
 		alignItems: 'center',
-		overflow: 'hidden', // Ховаємо зайвий контент під час анімації
+		overflow: 'hidden',
 		height: 10,
 	},
 	text: {
